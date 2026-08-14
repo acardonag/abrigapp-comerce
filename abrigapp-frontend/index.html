@@ -1,0 +1,157 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AbrigApp - Apoyo Solidario Colombia</title>
+    <!-- Bootstrap 5 CSS -->
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root {
+            --primary-color: #2b7a78; /* Un verde sólido/teal inspirado en plantillas modernas */
+            --secondary-color: #3aafa9;
+            --bg-light: #def2f1;
+        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; }
+        .navbar { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .navbar-brand { font-weight: bold; color: var(--primary-color) !important; font-size: 1.5rem; }
+        .hero-section {
+            background: linear-gradient(135deg, var(--bg-light) 0%, #ffffff 100%);
+            padding: 60px 0;
+            border-bottom: 1px solid #eee;
+        }
+        .hero-title { color: #17252a; font-weight: 800; }
+        .search-box { box-shadow: 0 5px 20px rgba(0,0,0,0.05); border-radius: 50px; overflow: hidden; }
+        .search-box input { border: none; padding: 15px 25px; outline: none; }
+        .search-box button { background-color: var(--primary-color); border: none; color: white; padding: 0 30px; font-weight: 600; transition: 0.3s; }
+        .search-box button:hover { background-color: #1f5a58; }
+        .store-card {
+            border: none;
+            border-radius: 15px;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.05);
+            transition: transform 0.3s, box-shadow 0.3s;
+            overflow: hidden;
+            background: white;
+            height: 100%;
+        }
+        .store-card:hover { transform: translateY(-5px); box-shadow: 0 10px 25px rgba(0,0,0,0.1); }
+        .store-logo { width: 80px; height: 80px; border-radius: 50%; object-fit: cover; margin-top: -40px; border: 4px solid white; background: #eee; }
+        .store-cover { height: 120px; background-color: var(--bg-light); object-fit: cover; width: 100%; }
+        .badge-category { background-color: var(--bg-light); color: var(--primary-color); font-weight: 600; border: 1px solid var(--secondary-color); }
+        .btn-whatsapp { background-color: #25D366; color: white; border-radius: 20px; font-weight: 600; padding: 8px 20px; }
+        .btn-whatsapp:hover { background-color: #1ebd5a; color: white; }
+    </style>
+</head>
+<body>
+
+    <!-- Navbar -->
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/">
+                <span>🇨🇴❤️🤝</span> AbrigApp
+            </a>
+            <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse justify-content-end" id="navbarNav">
+                <ul class="navbar-nav">
+                    <li class="nav-item">
+                        <a class="nav-link fw-semibold" href="#" onclick="showLoginModal()">Soy un Comercio</a>
+                    </li>
+                </ul>
+            </div>
+        </div>
+    </nav>
+
+    <!-- Hero Section -->
+    <section class="hero-section text-center text-lg-start" style="padding: 40px 0;">
+        <div class="container">
+            <div class="row align-items-center">
+                <div class="col-lg-6 mb-4 mb-lg-0">
+                    <h1 class="hero-title mb-3" style="color: var(--primary-color); font-size: 3rem;">Reactivando la economía, juntos</h1>
+                    <p class="lead mb-4 text-muted">AbrigApp es un directorio digital solidario. Conectamos directamente y sin comisiones a los emprendedores y comercios locales afectados por desastres naturales con compradores de todo el país. Tu compra es su reconstrucción.</p>
+                    <button class="btn btn-primary-custom btn-lg rounded-pill px-4" onclick="document.getElementById('directory').scrollIntoView({behavior: 'smooth'})">Explorar Comercios</button>
+                </div>
+                <div class="col-lg-6 text-center">
+                    <img src="/apoyo.png" alt="Apoyo Solidario" class="img-fluid rounded-4 shadow-lg" style="max-height: 400px; object-fit: cover; border: 5px solid white;">
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- Main Content: Directory -->
+    <div class="container my-5">
+        <!-- Filters -->
+        <div class="row mb-4 align-items-center">
+            <div class="col-md-6">
+                <h4 class="fw-bold mb-0">Comercios Locales</h4>
+            </div>
+            <div class="col-md-6 d-flex gap-2 justify-content-md-end mt-3 mt-md-0">
+                <select id="categoryFilter" class="form-select w-auto" onchange="loadDirectory()">
+                    <option value="">Todas las categorías</option>
+                </select>
+                <select id="cityFilter" class="form-select w-auto" onchange="loadDirectory()">
+                    <option value="">Todas las ciudades</option>
+                    <option value="Armenia">Armenia</option>
+                    <option value="Cali">Cali</option>
+                    <option value="Manizales">Manizales</option>
+                    <option value="Pereira">Pereira</option>
+                </select>
+            </div>
+        </div>
+
+        <!-- Grid -->
+        <div class="row g-4" id="directory">
+            <!-- Stores injected here via JS -->
+            <div class="col-12 text-center py-5">
+                <div class="spinner-border text-success" role="status"></div>
+                <p class="mt-2 text-muted">Cargando directorio...</p>
+            </div>
+        </div>
+    </div>
+
+    <!-- Login Modal (Hidden by default) -->
+    <div class="modal fade" id="loginModal" tabindex="-1">
+      <div class="modal-dialog modal-dialog-centered">
+        <div class="modal-content">
+          <div class="modal-header border-0">
+            <h5 class="modal-title fw-bold">Acceso para Comercios</h5>
+            <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+          </div>
+          <div class="modal-body" id="loginModalBody">
+            <!-- Step 1: Email -->
+            <div id="stepEmail">
+                <p class="text-muted">Ingresa tu correo para recibir un código de acceso único.</p>
+                <div class="mb-3">
+                    <input type="email" id="loginEmail" class="form-control" placeholder="tu@correo.com">
+                </div>
+                <button class="btn w-100" style="background-color: var(--primary-color); color: white;" onclick="requestOtp()">Solicitar Código</button>
+            </div>
+            
+            <!-- Step 2: OTP (Hidden initially) -->
+            <div id="stepOtp" style="display: none;">
+                <p class="text-muted" id="otpMessage">Ingresa el código de 6 dígitos enviado a tu correo.</p>
+                <div class="mb-3">
+                    <input type="text" id="loginOtp" class="form-control text-center fs-4" style="letter-spacing: 5px;" placeholder="000000" maxlength="6">
+                </div>
+                <button class="btn w-100" style="background-color: var(--primary-color); color: white;" onclick="verifyOtp()">Verificar y Entrar</button>
+            </div>
+
+            <!-- Loading State -->
+            <div id="loginLoading" class="text-center py-4" style="display: none;">
+                <div class="spinner-border text-success" role="status"></div>
+                <p class="mt-2 text-muted" id="loginLoadingText">Cargando...</p>
+            </div>
+
+            <!-- Error Alert -->
+            <div id="loginError" class="alert alert-danger mt-3 p-2 text-center" style="display: none; font-size: 0.9em;"></div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/src/main.ts"></script>
+</body>
+</html>

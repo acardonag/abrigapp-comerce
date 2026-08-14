@@ -1,0 +1,54 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Tienda - AbrigApp</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
+    <style>
+        :root { --primary-color: #2b7a78; --secondary-color: #3aafa9; --bg-light: #def2f1; }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; background-color: #f8f9fa; padding-bottom: 80px; }
+        .navbar { background-color: #ffffff; box-shadow: 0 2px 10px rgba(0,0,0,0.05); }
+        .navbar-brand { font-weight: bold; color: var(--primary-color) !important; font-size: 1.5rem; }
+        .store-header { background-color: white; padding: 2rem 0; box-shadow: 0 4px 15px rgba(0,0,0,0.05); margin-bottom: 2rem; }
+        .product-card { border: none; border-radius: 12px; box-shadow: 0 2px 8px rgba(0,0,0,0.05); transition: transform 0.2s; height: 100%; display: flex; flex-direction: column; }
+        .product-card:hover { transform: translateY(-5px); }
+        .product-img { width: 100%; height: 200px; object-fit: cover; border-top-left-radius: 12px; border-top-right-radius: 12px; }
+        .btn-primary-custom { background-color: var(--primary-color); color: white; border: none; }
+        .btn-primary-custom:hover { background-color: #1f5a58; color: white; }
+        .floating-cart { position: fixed; bottom: 20px; right: 20px; z-index: 1000; box-shadow: 0 4px 15px rgba(0,0,0,0.2); }
+    </style>
+</head>
+<body>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top">
+        <div class="container">
+            <a class="navbar-brand d-flex align-items-center gap-2" href="/"><span>🇨🇴❤️🤝</span> AbrigApp</a>
+            <div class="d-flex">
+                <a href="/" class="btn btn-outline-secondary btn-sm rounded-pill px-3">Volver al Directorio</a>
+            </div>
+        </div>
+    </nav>
+
+    <div id="storeHeader" class="store-header">
+        <div class="container text-center">
+            <div class="spinner-border text-success" role="status"></div>
+            <p class="mt-2 text-muted">Cargando tienda...</p>
+        </div>
+    </div>
+
+    <div class="container">
+        <div class="row g-4" id="productsGrid">
+            <!-- Products injected by JS -->
+        </div>
+    </div>
+
+    <!-- Floating WhatsApp Cart -->
+    <button class="btn btn-success rounded-pill px-4 py-3 floating-cart d-none" id="whatsappCartBtn" onclick="checkoutWhatsapp()">
+        <i class="ri-whatsapp-line fs-5 align-middle me-2"></i> Enviar Pedido (<span id="cartCount">0</span>)
+    </button>
+
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script type="module" src="/src/tienda.ts"></script>
+</body>
+</html>

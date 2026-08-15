@@ -219,6 +219,29 @@ const init = async () => {
 
     await loadCategories();
     window.loadDirectory();
+
+    // Show promo video modal once per session
+    if (!sessionStorage.getItem('abrigapp_video_seen')) {
+        setTimeout(() => {
+            const modalEl = document.getElementById('videoModal');
+            if (modalEl) {
+                // @ts-ignore
+                const videoModal = new bootstrap.Modal(modalEl);
+                videoModal.show();
+                sessionStorage.setItem('abrigapp_video_seen', 'true');
+                
+                modalEl.addEventListener('shown.bs.modal', () => {
+                    const video = document.getElementById('promoVideo') as HTMLVideoElement;
+                    if (video) video.play().catch(e => console.log('Autoplay prevented by browser'));
+                });
+                
+                modalEl.addEventListener('hidden.bs.modal', () => {
+                    const video = document.getElementById('promoVideo') as HTMLVideoElement;
+                    if (video) video.pause();
+                });
+            }
+        }, 1000); // 1s delay so the page loads first
+    }
 };
 
 document.addEventListener('DOMContentLoaded', init);

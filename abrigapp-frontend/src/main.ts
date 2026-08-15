@@ -58,7 +58,7 @@ const loadCategories = async () => {
 // Load Directory
 window.loadDirectory = async () => {
     const category = (document.getElementById('categoryFilter') as HTMLSelectElement)?.value || '';
-    const city = (document.getElementById('filterCity') as HTMLSelectElement)?.value || '';
+    const city = (document.getElementById('cityFilter') as HTMLSelectElement)?.value || '';
 
     let data = mockBusinesses;
     try {

@@ -98,7 +98,7 @@ window.loadDirectory = async () => {
                         </div>
                         <div class="mt-auto d-flex flex-column gap-2">
                             <a href="/tienda.html?slug=${b.slug}" class="btn btn-outline-dark rounded-pill">Ver Catálogo</a>
-                            <a href="https://wa.me/${b.whatsappNumber}?text=Hola, vi tu tienda en AbrigApp y me gustaría apoyar comprando..." target="_blank" class="btn btn-whatsapp d-flex align-items-center justify-content-center gap-2">
+                            <a href="https://wa.me/${(b.whatsappNumber.replace(/[^0-9]/g, '').length === 10 ? '57' : '') + b.whatsappNumber.replace(/[^0-9]/g, '')}?text=Hola, vi tu tienda en AbrigApp y me gustaría apoyar comprando..." target="_blank" class="btn btn-whatsapp d-flex align-items-center justify-content-center gap-2">
                                 <i class="ri-whatsapp-line fs-5"></i> Contactar
                             </a>
                         </div>

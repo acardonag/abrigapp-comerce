@@ -1,7 +1,6 @@
 declare global {
     interface Window {
-        addToCart: (id: string, name: string, price: number) => void;
-        checkoutWhatsapp: () => void;
+        contactWhatsapp: (title: string, price: number) => void;
     }
 }
 
@@ -13,7 +12,6 @@ if (!storeSlug) {
 }
 
 let storeData: any = null;
-let cart: any[] = [];
 
 const loadStore = async () => {
     try {
@@ -69,10 +67,10 @@ const renderProducts = () => {
                 <img src="${p.imageUrl || 'https://via.placeholder.com/300x200'}" class="product-img" alt="${p.title}">
                 <div class="card-body d-flex flex-column">
                     <h5 class="card-title fw-bold">${p.title}</h5>
-                    <p class="card-text text-muted small flex-grow-1">${p.description || ''}</p>
+                    <p class="card-text text-muted small flex-grow-1">${(p.description || '').substring(0, 100)}${(p.description && p.description.length > 100) ? '...' : ''}</p>
                     <h6 class="text-success fw-bold fs-5 mb-3">$ ${p.price}</h6>
-                    <button class="btn btn-primary-custom w-100 mt-auto rounded-pill" onclick="addToCart('${p.id}', '${p.title.replace(/'/g, "\\'")}', ${p.price})">
-                        <i class="ri-shopping-cart-2-line"></i> Agregar
+                    <button class="btn btn-success w-100 mt-auto rounded-pill" onclick="contactWhatsapp('${p.title.replace(/'/g, "\\'")}', ${p.price})">
+                        <i class="ri-whatsapp-line"></i> Me interesa
                     </button>
                 </div>
             </div>
@@ -80,36 +78,12 @@ const renderProducts = () => {
     `).join('');
 };
 
-window.addToCart = (id: string, title: string, price: number) => {
-    cart.push({ id, title, price });
-    updateCartBtn();
-};
+window.contactWhatsapp = (title: string, price: number) => {
+    if (!storeData || !storeData.whatsappNumber) return;
 
-const updateCartBtn = () => {
-    const btn = document.getElementById('whatsappCartBtn')!;
-    const count = document.getElementById('cartCount')!;
-    if (cart.length > 0) {
-        btn.classList.remove('d-none');
-        count.textContent = cart.length.toString();
-    } else {
-        btn.classList.add('d-none');
-    }
-};
-
-window.checkoutWhatsapp = () => {
-    if (!storeData || !storeData.whatsappNumber || cart.length === 0) return;
-
-    let text = `¡Hola *${storeData.name}*! 👋\nMe gustaría hacer el siguiente pedido de tu catálogo en AbrigApp:\n\n`;
-    let total = 0;
-
-    cart.forEach((item, index) => {
-        text += `${index + 1}. ${item.title} - $${item.price}\n`;
-        total += item.price;
-    });
-
-    text += `\n*Total: $${total}*\n\nQuedo atento(a) para coordinar el pago y la entrega. ¡Gracias!`;
-
+    let text = `¡Hola *${storeData.name}*! 👋\nEstoy interesado(a) en este producto de tu catálogo en AbrigApp:\n\n*${title}* por $${price}\n\nQuedo atento(a) para más información. ¡Gracias!`;
     const encodedText = encodeURIComponent(text);
+    
     // Remove all non-numeric chars from whatsapp string
     let phone = storeData.whatsappNumber.replace(/[^0-9]/g, '');
     if (phone.length === 10) phone = '57' + phone; // Default to Colombia code if 10 digits

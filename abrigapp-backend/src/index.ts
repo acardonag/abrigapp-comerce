@@ -20,7 +20,7 @@ import { superadminRouter } from './routes/superadmin';
 import path from 'path';
 
 // Serve uploads statically
-app.use('/uploads', express.static(path.join(__dirname, '../../uploads')));
+app.use('/uploads', express.static(path.join(__dirname, '../uploads')));
 
 app.use('/api/auth', authRouter);
 app.use('/api/public', publicRouter);

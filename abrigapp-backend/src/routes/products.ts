@@ -72,7 +72,7 @@ productsRouter.put('/:id', async (req: AuthRequest, res: Response) => {
       isAvailable,
       updatedAt: new Date()
     })
-    .where(and(eq(products.id, req.params.id), eq(products.businessId, business.id)))
+      .where(and(eq(products.id, req.params.id as string), eq(products.businessId, business.id)))
     .returning();
 
     if (!updated) {
@@ -95,7 +95,7 @@ productsRouter.delete('/:id', async (req: AuthRequest, res: Response) => {
     }
 
     const [deleted] = await db.delete(products)
-      .where(and(eq(products.id, req.params.id), eq(products.businessId, business.id)))
+        .where(and(eq(products.id, req.params.id as string), eq(products.businessId, business.id)))
       .returning();
 
     if (!deleted) {

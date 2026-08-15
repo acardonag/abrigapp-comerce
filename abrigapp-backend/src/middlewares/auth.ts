@@ -16,9 +16,13 @@ export const authenticate = (req: AuthRequest, res: Response, next: NextFunction
   }
 
   const token = authHeader.split(' ')[1];
+  if (!token) {
+    res.status(401).json({ error: 'No token provided' });
+    return;
+  }
 
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as { userId: string, email: string };
+    const decoded = jwt.verify(token, (process.env.JWT_SECRET as string) || 'secret') as any as { userId: string, email: string };
     req.user = decoded;
     next();
   } catch (error) {

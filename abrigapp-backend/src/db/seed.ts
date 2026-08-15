@@ -8,11 +8,18 @@ async function main() {
     { name: 'Alimentos & Gastronomía', slug: 'alimentos-gastronomia' },
     { name: 'Ropa, Calzado & Moda', slug: 'ropa-calzado-moda' },
     { name: 'Artesanías & Decoración', slug: 'artesanias-decoracion' },
-    { name: 'Servicios & Reparaciones', slug: 'servicios-reparaciones' },
-    { name: 'Tecnología & Accesorios', slug: 'tecnologia-accesorios' },
-    { name: 'Mascotas', slug: 'mascotas' },
     { name: 'Salud & Belleza', slug: 'salud-belleza' },
+    { name: 'Hogar & Muebles', slug: 'hogar-muebles' },
+    { name: 'Tecnología & Accesorios', slug: 'tecnologia-accesorios' },
+    { name: 'Servicios Profesionales', slug: 'servicios-profesionales' },
+    { name: 'Construcción & Ferretería', slug: 'construccion-ferreteria' },
+    { name: 'Mascotas & Veterinaria', slug: 'mascotas-veterinaria' },
+    { name: 'Educación & Cursos', slug: 'educacion-cursos' },
+    { name: 'Turismo & Recreación', slug: 'turismo-recreacion' },
+    { name: 'Transporte & Logística', slug: 'transporte-logistica' },
+    { name: 'Servicios & Reparaciones', slug: 'servicios-reparaciones' },
     { name: 'Abarrotes & Mercados', slug: 'abarrotes-mercados' },
+    { name: 'Otros', slug: 'otros' },
   ];
 
   for (const cat of initialCategories) {

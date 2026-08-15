@@ -1,6 +1,8 @@
 declare global {
     interface Window {
         contactWhatsapp: (title: string, price: number) => void;
+        showReportModal: (type: string, id: string) => void;
+        submitReport: (e: Event) => void;
     }
 }
 
@@ -44,10 +46,13 @@ const renderHeader = () => {
                 <div class="col-md-2 mb-3 mb-md-0">
                     <img src="${logo}" alt="${storeData.name}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--primary-color);">
                 </div>
-                <div class="col-md-10">
+                <div class="col-md-9">
                     <h1 class="fw-bold mb-2">${storeData.name}</h1>
                     <p class="text-muted mb-2"><i class="ri-map-pin-line"></i> ${storeData.city}</p>
                     <p class="mb-0 fs-5">${storeData.description || '¡Apoyando la economía local!'}</p>
+                </div>
+                <div class="col-md-1 text-md-end mt-3 mt-md-0">
+                    <button class="btn btn-sm btn-outline-danger border-0" onclick="showReportModal('business', '${storeData.id}')" title="Reportar tienda"><i class="ri-flag-line fs-5"></i></button>
                 </div>
             </div>
         </div>
@@ -66,7 +71,10 @@ const renderProducts = () => {
             <div class="card product-card">
                 <img src="${p.imageUrl || 'https://via.placeholder.com/300x200'}" class="product-img" alt="${p.title}">
                 <div class="card-body d-flex flex-column">
-                    <h5 class="card-title fw-bold">${p.title}</h5>
+                    <div class="d-flex justify-content-between align-items-start">
+                        <h5 class="card-title fw-bold pe-2">${p.title}</h5>
+                        <button class="btn btn-sm btn-link text-danger p-0 border-0" onclick="showReportModal('product', '${p.id}')" title="Reportar producto"><i class="ri-flag-line"></i></button>
+                    </div>
                     <p class="card-text text-muted small flex-grow-1">${(p.description || '').substring(0, 100)}${(p.description && p.description.length > 100) ? '...' : ''}</p>
                     <h6 class="text-success fw-bold fs-5 mb-3">$ ${p.price}</h6>
                     <button class="btn btn-success w-100 mt-auto rounded-pill" onclick="contactWhatsapp('${p.title.replace(/'/g, "\\'")}', ${p.price})">
@@ -90,6 +98,64 @@ window.contactWhatsapp = (title: string, price: number) => {
     
     const waUrl = `https://wa.me/${phone}?text=${encodedText}`;
     window.open(waUrl, '_blank');
+};
+
+window.showReportModal = (type: string, id: string) => {
+    (document.getElementById('reportType') as HTMLInputElement).value = type;
+    (document.getElementById('reportId') as HTMLInputElement).value = id;
+    (document.getElementById('reportReason') as HTMLTextAreaElement).value = '';
+    const alertEl = document.getElementById('reportAlert')!;
+    alertEl.style.display = 'none';
+    
+    // @ts-ignore
+    const modal = new bootstrap.Modal(document.getElementById('reportModal'));
+    modal.show();
+};
+
+window.submitReport = async (e: Event) => {
+    e.preventDefault();
+    const btn = document.getElementById('reportSubmitBtn') as HTMLButtonElement;
+    const type = (document.getElementById('reportType') as HTMLInputElement).value;
+    const id = (document.getElementById('reportId') as HTMLInputElement).value;
+    const reason = (document.getElementById('reportReason') as HTMLTextAreaElement).value;
+    const alertEl = document.getElementById('reportAlert')!;
+
+    if (!reason.trim()) {
+        alertEl.className = 'alert alert-danger mt-3';
+        alertEl.textContent = 'Por favor ingresa una razón.';
+        alertEl.style.display = 'block';
+        return;
+    }
+
+    btn.disabled = true;
+    btn.textContent = 'Enviando...';
+
+    try {
+        const res = await fetch('/api/public/report', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ type, targetId: id, reason })
+        });
+
+        if (res.ok) {
+            alertEl.className = 'alert alert-success mt-3';
+            alertEl.textContent = 'Reporte enviado correctamente. Gracias por ayudarnos.';
+            alertEl.style.display = 'block';
+            setTimeout(() => {
+                // @ts-ignore
+                bootstrap.Modal.getInstance(document.getElementById('reportModal'))?.hide();
+            }, 2000);
+        } else {
+            throw new Error();
+        }
+    } catch (err) {
+        alertEl.className = 'alert alert-danger mt-3';
+        alertEl.textContent = 'Error al enviar el reporte. Intenta más tarde.';
+        alertEl.style.display = 'block';
+    } finally {
+        btn.disabled = false;
+        btn.textContent = 'Enviar Reporte';
+    }
 };
 
 loadStore();

@@ -35,3 +35,36 @@ export const sendOtpEmail = async (to: string, otp: string) => {
     throw error;
   }
 };
+
+export const sendReportEmail = async (type: string, name: string, reason: string, id: string) => {
+  const targetLabel = type === 'business' ? 'Comercio/Tienda' : 'Producto';
+  const mailOptions = {
+    from: `"AbrigApp Sistema" <${process.env.GMAIL_USER}>`,
+    to: 'abrigappcolombia@gmail.com',
+    subject: `NUEVO REPORTE: ${targetLabel} reportado en AbrigApp`,
+    html: `
+      <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; border: 1px solid #ddd; border-radius: 5px;">
+        <h2 style="color: #d9534f;">⚠️ Alerta de Reporte de Usuario</h2>
+        <p>Se ha recibido un nuevo reporte desde la plataforma pública:</p>
+        <ul>
+          <li><strong>Tipo:</strong> ${targetLabel}</li>
+          <li><strong>Nombre:</strong> ${name}</li>
+          <li><strong>ID de Base de Datos:</strong> <code>${id}</code></li>
+        </ul>
+        <h3>Razón del reporte:</h3>
+        <p style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #d9534f; font-style: italic;">
+          "${reason}"
+        </p>
+        <p>Por favor, ingresa al <a href="https://abrigapp-co.vercel.app/super-admin.html">Panel de Super Admin</a> para revisar y tomar acción si es necesario.</p>
+      </div>
+    `,
+  };
+
+  try {
+    await transporter.sendMail(mailOptions);
+    console.log(`Report email sent for ${type} ${id}`);
+  } catch (error) {
+    console.error(`Error sending report email:`, error);
+    throw error;
+  }
+};

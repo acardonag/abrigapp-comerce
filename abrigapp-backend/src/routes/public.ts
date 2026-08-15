@@ -2,6 +2,7 @@ import { Router } from 'express';
 import { db } from '../db';
 import { businesses, categories, products } from '../db/schema';
 import { eq, ilike, and } from 'drizzle-orm';
+import { sendReportEmail } from '../services/email';
 
 export const publicRouter = Router();
 
@@ -74,7 +75,32 @@ publicRouter.get('/store/:slug', async (req, res) => {
       products: businessProducts
     });
   } catch (error) {
-    console.error('Error fetching store:', error);
     res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+publicRouter.post('/report', async (req, res) => {
+  const { type, targetId, reason } = req.body;
+  if (!type || !targetId || !reason) {
+    res.status(400).json({ error: 'Faltan parámetros de reporte' });
+    return;
+  }
+
+  try {
+    let targetName = 'Desconocido';
+    
+    if (type === 'business') {
+      const [business] = await db.select().from(businesses).where(eq(businesses.id, targetId));
+      if (business) targetName = business.name;
+    } else if (type === 'product') {
+      const [product] = await db.select().from(products).where(eq(products.id, targetId));
+      if (product) targetName = product.title;
+    }
+
+    await sendReportEmail(type, targetName, reason, targetId);
+    res.json({ success: true, message: 'Reporte enviado' });
+  } catch (error) {
+    console.error('Report error:', error);
+    res.status(500).json({ error: 'Error enviando reporte' });
   }
 });

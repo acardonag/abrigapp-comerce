@@ -76,7 +76,7 @@ const renderProducts = () => {
                         <button class="btn btn-sm btn-link text-danger p-0 border-0" onclick="showReportModal('product', '${p.id}')" title="Reportar producto"><i class="ri-flag-line"></i></button>
                     </div>
                     <p class="card-text text-muted small flex-grow-1">${(p.description || '').substring(0, 100)}${(p.description && p.description.length > 100) ? '...' : ''}</p>
-                    <h6 class="text-success fw-bold fs-5 mb-3">$ ${p.price}</h6>
+                    <h6 class="text-success fw-bold fs-5 mb-3">$ ${Number(p.price).toLocaleString('es-CO')}</h6>
                     <button class="btn btn-success w-100 mt-auto rounded-pill" onclick="contactWhatsapp('${p.title.replace(/'/g, "\\'")}', ${p.price})">
                         <i class="ri-whatsapp-line"></i> Me interesa
                     </button>
@@ -89,7 +89,7 @@ const renderProducts = () => {
 window.contactWhatsapp = (title: string, price: number) => {
     if (!storeData || !storeData.whatsappNumber) return;
 
-    let text = `¡Hola *${storeData.name}*! 👋\nEstoy interesado(a) en este producto de tu catálogo en AbrigApp:\n\n*${title}* por $${price}\n\nQuedo atento(a) para más información. ¡Gracias!`;
+    let text = `¡Hola *${storeData.name}*! 👋\nEstoy interesado(a) en este producto de tu catálogo en AbrigApp:\n\n*${title}* por $${Number(price).toLocaleString('es-CO')}\n\nQuedo atento(a) para más información. ¡Gracias!`;
     const encodedText = encodeURIComponent(text);
     
     // Remove all non-numeric chars from whatsapp string

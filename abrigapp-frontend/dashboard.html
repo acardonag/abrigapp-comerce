@@ -59,7 +59,7 @@
                 <div class="row">
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Precio ($ COP)</label>
-                        <input type="number" class="form-control" id="productPrice" required>
+                        <input type="text" class="form-control" id="productPrice" required oninput="this.value = this.value.replace(/[^0-9]/g, '').replace(/\B(?=(\d{3})+(?!\d))/g, '.');">
                     </div>
                     <div class="col-md-6 mb-3">
                         <label class="form-label">Foto del Producto</label>

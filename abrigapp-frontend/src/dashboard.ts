@@ -224,7 +224,7 @@ const renderDashboard = () => {
                             <tr>
                                 <td><img src="${p.imageUrl || 'https://via.placeholder.com/50'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
                                 <td class="fw-semibold">${p.title}</td>
-                                <td>$ ${p.price}</td>
+                                <td>$ ${Number(p.price).toLocaleString('es-CO')}</td>
                                 <td><span class="badge ${p.isAvailable ? 'bg-success' : 'bg-secondary'}">${p.isAvailable ? 'Disponible' : 'Oculto'}</span></td>
                                 <td class="text-end">
                                     <button class="btn btn-sm btn-light text-primary" onclick='showProductModal(${JSON.stringify(p).replace(/'/g, "&apos;")})'><i class="ri-edit-2-line"></i></button>
@@ -260,9 +260,9 @@ window.showProductModal = (product: any = null) => {
     if (product) {
         document.getElementById('productModalTitle')!.textContent = 'Editar Producto';
         (document.getElementById('productId') as HTMLInputElement).value = product.id;
-        (document.getElementById('productName') as HTMLInputElement).value = product.name;
+        (document.getElementById('productName') as HTMLInputElement).value = product.title || product.name || '';
         (document.getElementById('productDesc') as HTMLTextAreaElement).value = product.description || '';
-        (document.getElementById('productPrice') as HTMLInputElement).value = product.price;
+        (document.getElementById('productPrice') as HTMLInputElement).value = (product.price || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
         (document.getElementById('productAvailable') as HTMLInputElement).checked = product.isAvailable;
         if (product.imageUrl) {
             document.getElementById('currentImageUrl')!.style.display = 'block';
@@ -314,7 +314,7 @@ window.saveProduct = async (e: Event) => {
         const payload: any = {
             title: (document.getElementById('productName') as HTMLInputElement).value,
             description: (document.getElementById('productDesc') as HTMLTextAreaElement).value,
-            price: parseFloat((document.getElementById('productPrice') as HTMLInputElement).value),
+            price: parseFloat((document.getElementById('productPrice') as HTMLInputElement).value.replace(/\./g, '')),
             isAvailable: (document.getElementById('productAvailable') as HTMLInputElement).checked,
         };
 

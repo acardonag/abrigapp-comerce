@@ -154,7 +154,7 @@ window.saveBusiness = async (e: Event) => {
 
             if (uploadRes.ok) {
                 const upData = await uploadRes.json();
-                logoUrl = 'http://localhost:3000' + upData.url;
+                logoUrl = upData.url;
             } else {
                 throw new Error("Error subiendo el logo");
             }
@@ -223,7 +223,7 @@ const renderDashboard = () => {
                         ${products.map(p => `
                             <tr>
                                 <td><img src="${p.imageUrl || 'https://via.placeholder.com/50'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
-                                <td class="fw-semibold">${p.name}</td>
+                                <td class="fw-semibold">${p.title}</td>
                                 <td>$ ${p.price}</td>
                                 <td><span class="badge ${p.isAvailable ? 'bg-success' : 'bg-secondary'}">${p.isAvailable ? 'Disponible' : 'Oculto'}</span></td>
                                 <td class="text-end">
@@ -305,7 +305,7 @@ window.saveProduct = async (e: Event) => {
 
             if (uploadRes.ok) {
                 const upData = await uploadRes.json();
-                imageUrl = 'http://localhost:3000' + upData.url; // Use full backend URL for images
+                imageUrl = upData.url; // Use full backend URL for images
             } else {
                 throw new Error("Error subiendo imagen");
             }

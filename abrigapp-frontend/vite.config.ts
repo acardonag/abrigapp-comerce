@@ -7,7 +7,8 @@ export default defineConfig({
       input: {
         main: resolve(__dirname, 'index.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
-        tienda: resolve(__dirname, 'tienda.html')
+        tienda: resolve(__dirname, 'tienda.html'),
+        superadmin: resolve(__dirname, 'super-admin.html')
       }
     }
   },

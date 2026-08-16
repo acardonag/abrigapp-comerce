@@ -102,9 +102,12 @@ const renderSetupProfile = () => {
                                 <select id="bCity" class="form-select" required>
                                     <option value="">Selecciona una ciudad...</option>
                                     <option value="Armenia">Armenia</option>
+                                    <option value="Buenaventura">Buenaventura</option>
                                     <option value="Cali">Cali</option>
                                     <option value="Manizales">Manizales</option>
                                     <option value="Pereira">Pereira</option>
+                                    <option value="Quibdó">Quibdó</option>
+                                    <option value="Tuluá">Tuluá</option>
                                 </select>
                             </div>
                         </div>

@@ -69,7 +69,7 @@ const renderProducts = () => {
     grid.innerHTML = storeData.products.map((p: any) => `
         <div class="col-12 col-md-4 col-lg-3">
             <div class="card product-card">
-                <img src="${p.imageUrl || 'https://via.placeholder.com/300x200'}" class="product-img" alt="${p.title}">
+                <img src="${p.imageUrl || '/default-product.png'}" class="product-img" alt="${p.title}">
                 <div class="card-body d-flex flex-column">
                     <div class="d-flex justify-content-between align-items-start">
                         <h5 class="card-title fw-bold pe-2">${p.title}</h5>

@@ -3,16 +3,18 @@ import * as dotenv from 'dotenv';
 dotenv.config();
 
 const transporter = nodemailer.createTransport({
-  service: 'gmail',
+  host: process.env.SMTP_HOST || 'smtp-relay.brevo.com',
+  port: parseInt(process.env.SMTP_PORT || '587'),
+  secure: false, // true for 465, false for other ports
   auth: {
-    user: process.env.GMAIL_USER,
-    pass: process.env.GMAIL_APP_PASSWORD,
+    user: process.env.SMTP_USER,
+    pass: process.env.SMTP_PASS,
   },
 });
 
 export const sendOtpEmail = async (to: string, otp: string) => {
   const mailOptions = {
-    from: `"AbrigApp Colombia" <${process.env.GMAIL_USER}>`,
+    from: `"AbrigApp Colombia" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to,
     subject: 'Tu código de acceso - AbrigApp',
     html: `
@@ -39,7 +41,7 @@ export const sendOtpEmail = async (to: string, otp: string) => {
 export const sendReportEmail = async (type: string, name: string, reason: string, id: string) => {
   const targetLabel = type === 'business' ? 'Comercio/Tienda' : 'Producto';
   const mailOptions = {
-    from: `"AbrigApp Sistema" <${process.env.GMAIL_USER}>`,
+    from: `"AbrigApp Sistema" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
     to: 'abrigappcolombia@gmail.com',
     subject: `NUEVO REPORTE: ${targetLabel} reportado en AbrigApp`,
     html: `

@@ -20,7 +20,7 @@ export const sendOtpEmail = async (to: string, otp: string) => {
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; max-width: 600px; margin: 0 auto; border: 1px solid #eee; border-radius: 10px;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://abrigapp-co.vercel.app/logo.png" alt="AbrigApp Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+          <img src="https://abrigapp-co.vercel.app/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 80px; height: 80px; border-radius: 50%;">
         </div>
         <h2 style="color: #2b7a78; text-align: center;">Bienvenido a AbrigApp</h2>
         <p style="text-align: center;">Tu código de un solo uso (OTP) es:</p>
@@ -58,7 +58,7 @@ export const sendReportEmail = async (type: string, name: string, reason: string
     html: `
       <div style="font-family: Arial, sans-serif; padding: 20px; color: #333; border: 1px solid #ddd; border-radius: 5px; max-width: 600px; margin: 0 auto;">
         <div style="text-align: center; margin-bottom: 20px;">
-          <img src="https://abrigapp-co.vercel.app/logo.png" alt="AbrigApp Logo" style="width: 60px; height: 60px; border-radius: 50%;">
+          <img src="https://abrigapp-co.vercel.app/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 60px; height: 60px; border-radius: 50%;">
         </div>
         <h2 style="color: #d9534f; text-align: center;">⚠️ Alerta de Reporte de Usuario</h2>
         <p>Se ha recibido un nuevo reporte desde la plataforma pública:</p>

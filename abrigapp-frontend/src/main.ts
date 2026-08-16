@@ -17,6 +17,7 @@ declare global {
         showLoginModal: () => void;
         requestOtp: () => void;
         verifyOtp: () => void;
+        shareBusiness: (name: string, slug: string) => void;
     }
 }
 
@@ -87,7 +88,10 @@ window.loadDirectory = async () => {
 
         dir.innerHTML = data.map((b: any) => `
             <div class="col-xl-3 col-lg-4 col-md-6">
-                <div class="store-card d-flex flex-column">
+                <div class="store-card d-flex flex-column position-relative">
+                    <button class="btn btn-light bg-white rounded-circle shadow-sm position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center text-primary" style="z-index: 10; width: 35px; height: 35px; padding: 0;" onclick="shareBusiness('${b.name}', '${b.slug}')" title="Compartir comercio">
+                        <i class="ri-share-forward-line fs-5"></i>
+                    </button>
                     <div class="store-cover"></div>
                     <div class="px-3 pb-4 text-center flex-grow-1 d-flex flex-column">
                         <img src="${b.logoUrl || 'https://ui-avatars.com/api/?name=' + b.name.replace(' ', '+') + '&background=random'}" alt="${b.name}" class="store-logo mx-auto mb-3">
@@ -205,6 +209,25 @@ window.verifyOtp = async () => {
 };
 
 // Init
+window.shareBusiness = async (name: string, slug: string) => {
+    const url = `${window.location.origin}/tienda.html?slug=${slug}`;
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: `${name} en AbrigApp`,
+                text: `¡Conoce a ${name} y apoya el comercio local en AbrigApp!`,
+                url: url
+            });
+        } catch (err) {
+            console.log('Share canceled or failed');
+        }
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('¡Enlace copiado al portapapeles! Ya puedes pegarlo en tus redes o WhatsApp.');
+        });
+    }
+};
+
 const init = async () => {
     // Check auth state
     const token = localStorage.getItem('abrigapp_token');

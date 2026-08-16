@@ -2,6 +2,7 @@ declare global {
     interface Window {
         contactWhatsapp: (title: string, price: number) => void;
         showReportModal: (type: string, id: string) => void;
+        shareBusiness: (name: string, slug: string) => void;
         submitReport: (e: Event) => void;
     }
 }
@@ -51,8 +52,13 @@ const renderHeader = () => {
                     <p class="text-muted mb-2"><i class="ri-map-pin-line"></i> ${storeData.city}</p>
                     <p class="mb-0 fs-5">${storeData.description || '¡Apoyando la economía local!'}</p>
                 </div>
-                <div class="col-md-1 text-md-end mt-3 mt-md-0">
-                    <button class="btn btn-sm btn-outline-danger border-0" onclick="showReportModal('business', '${storeData.id}')" title="Reportar tienda"><i class="ri-flag-line fs-5"></i></button>
+                <div class="col-md-2 text-md-end mt-3 mt-md-0 d-flex flex-row flex-md-column justify-content-center gap-2 align-items-md-end">
+                    <button class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2" onclick="shareBusiness('${storeData.name}', '${storeData.slug}')" title="Compartir tienda">
+                        <i class="ri-share-forward-line fs-5"></i> <span class="d-md-none">Compartir</span>
+                    </button>
+                    <button class="btn btn-outline-danger border-0 d-flex align-items-center justify-content-center gap-2" onclick="showReportModal('business', '${storeData.id}')" title="Reportar tienda">
+                        <i class="ri-flag-line fs-5"></i> <span class="d-md-none">Reportar</span>
+                    </button>
                 </div>
             </div>
         </div>
@@ -98,6 +104,25 @@ window.contactWhatsapp = (title: string, price: number) => {
     
     const waUrl = `https://wa.me/${phone}?text=${encodedText}`;
     window.open(waUrl, '_blank');
+};
+
+window.shareBusiness = async (name: string, slug: string) => {
+    const url = `${window.location.origin}/tienda.html?slug=${slug}`;
+    if (navigator.share) {
+        try {
+            await navigator.share({
+                title: `${name} en AbrigApp`,
+                text: `¡Conoce a ${name} y apoya el comercio local en AbrigApp!`,
+                url: url
+            });
+        } catch (err) {
+            console.log('Share canceled or failed');
+        }
+    } else {
+        navigator.clipboard.writeText(url).then(() => {
+            alert('¡Enlace copiado al portapapeles! Ya puedes pegarlo en tus redes o WhatsApp.');
+        });
+    }
 };
 
 window.showReportModal = (type: string, id: string) => {

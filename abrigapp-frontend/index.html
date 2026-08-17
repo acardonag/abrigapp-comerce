@@ -76,6 +76,9 @@
                 <div class="col-lg-6 mb-4 mb-lg-0">
                     <h1 class="hero-title mb-3" style="color: var(--primary-color); font-size: 3rem;">Reactivando la economía, juntos</h1>
                     <p class="lead mb-4 text-muted">AbrigApp es un directorio digital solidario. Conectamos directamente y sin comisiones a los emprendedores y comercios locales afectados por desastres naturales con compradores de todo el país. Tu compra es su reconstrucción.</p>
+                    <div class="alert alert-success d-inline-block rounded-pill px-4 py-2 mb-4 shadow-sm border-0 bg-success bg-opacity-10 text-success" style="font-size: 1.1rem;">
+                        🔥 Ya hay <strong id="globalBusinessCount">...</strong> comercios locales registrados. ¡Descubre sus productos y ayúdales con tu compra!
+                    </div>
                     <div class="d-flex flex-wrap gap-3 justify-content-center justify-content-lg-start">
                         <button class="btn btn-secondary-custom btn-lg rounded-pill px-4 shadow-sm" onclick="document.getElementById('directory').scrollIntoView({behavior: 'smooth'})">Explorar Comercios</button>
                         <button class="btn btn-primary-custom btn-lg rounded-pill px-4 shadow-sm" onclick="showLoginModal()">Registrar mi comercio</button>
@@ -120,6 +123,13 @@
                 <div class="spinner-border text-success" role="status"></div>
                 <p class="mt-2 text-muted">Cargando directorio...</p>
             </div>
+        </div>
+
+        <!-- Load More -->
+        <div class="text-center mt-5" id="loadMoreContainer" style="display: none;">
+            <button id="loadMoreBtn" class="btn btn-outline-success rounded-pill px-5 fw-semibold" onclick="loadMoreBusinesses()">
+                <i class="ri-refresh-line me-2"></i>Cargar más comercios
+            </button>
         </div>
     </div>
 

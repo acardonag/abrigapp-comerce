@@ -13,13 +13,17 @@ const mockBusinesses = [
 
 declare global {
     interface Window {
-        loadDirectory: () => void;
+        loadDirectory: (reset?: boolean) => void;
+        loadMoreBusinesses: () => void;
         showLoginModal: () => void;
         requestOtp: () => void;
         verifyOtp: () => void;
         shareBusiness: (name: string, slug: string) => void;
     }
 }
+
+let currentPage = 0;
+const pageSize = 10;
 
 // UI Helpers for Login Modal
 const showLoginError = (msg: string) => {
@@ -57,13 +61,22 @@ const loadCategories = async () => {
 };
 
 // Load Directory
-window.loadDirectory = async () => {
+// Load Directory
+window.loadDirectory = async (reset = true) => {
+    if (reset) {
+        currentPage = 0;
+        const dir = document.getElementById('directory');
+        if (dir) dir.innerHTML = `<div class="col-12 text-center py-5"><div class="spinner-border text-success" role="status"></div><p class="mt-2 text-muted">Cargando directorio...</p></div>`;
+        const loadMore = document.getElementById('loadMoreContainer');
+        if (loadMore) loadMore.style.display = 'none';
+    }
+
     const category = (document.getElementById('categoryFilter') as HTMLSelectElement)?.value || '';
     const city = (document.getElementById('cityFilter') as HTMLSelectElement)?.value || '';
 
     let data = mockBusinesses;
     try {
-        const query = new URLSearchParams({ category, city }).toString();
+        const query = new URLSearchParams({ category, city, limit: pageSize.toString(), offset: (currentPage * pageSize).toString() }).toString();
         const response = await fetch('/api/public/businesses?' + query);
         if (response.ok) {
             data = await response.json();
@@ -76,17 +89,19 @@ window.loadDirectory = async () => {
             const matchCat = category ? b.category === category || b.id === category : true;
             const matchCity = city ? b.city === city : true;
             return matchCat && matchCity;
-        });
+        }).slice(currentPage * pageSize, (currentPage + 1) * pageSize);
     }
 
     const dir = document.getElementById('directory');
     if (dir) {
-        if (data.length === 0) {
+        if (reset) dir.innerHTML = '';
+
+        if (data.length === 0 && reset) {
             dir.innerHTML = `<div class="col-12 text-center text-muted py-5"><i class="ri-search-line fs-1"></i><p>No se encontraron comercios</p></div>`;
             return;
         }
 
-        dir.innerHTML = data.map((b: any) => `
+        const html = data.map((b: any) => `
             <div class="col-xl-3 col-lg-4 col-md-6">
                 <div class="store-card d-flex flex-column position-relative">
                     <button class="btn btn-light bg-white rounded-circle shadow-sm position-absolute top-0 end-0 m-2 d-flex align-items-center justify-content-center text-primary" style="z-index: 10; width: 35px; height: 35px; padding: 0;" onclick="shareBusiness('${b.name}', '${b.slug}')" title="Compartir comercio">
@@ -110,7 +125,19 @@ window.loadDirectory = async () => {
                 </div>
             </div>
         `).join('');
+
+        dir.innerHTML += html;
+
+        const loadMoreBtn = document.getElementById('loadMoreContainer');
+        if (loadMoreBtn) {
+            loadMoreBtn.style.display = data.length === pageSize ? 'block' : 'none';
+        }
     }
+};
+
+window.loadMoreBusinesses = () => {
+    currentPage++;
+    window.loadDirectory(false);
 };
 
 // Modals
@@ -241,7 +268,17 @@ const init = async () => {
     }
 
     await loadCategories();
-    window.loadDirectory();
+    
+    try {
+        const resCount = await fetch('/api/public/businesses/count');
+        if (resCount.ok) {
+            const dataCount = await resCount.json();
+            const el = document.getElementById('globalBusinessCount');
+            if (el) el.textContent = dataCount.count || '0';
+        }
+    } catch(e) {}
+
+    window.loadDirectory(true);
 
     // Show promo video modal once per session
     if (!sessionStorage.getItem('abrigapp_video_seen')) {

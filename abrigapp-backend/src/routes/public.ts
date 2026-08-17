@@ -1,15 +1,28 @@
 import { Router } from 'express';
 import { db } from '../db';
 import { businesses, categories, products } from '../db/schema';
-import { eq, ilike, and } from 'drizzle-orm';
+import { eq, ilike, and, count } from 'drizzle-orm';
 import { sendReportEmail } from '../services/email';
 
 export const publicRouter = Router();
 
+// Get global count of active businesses
+publicRouter.get('/businesses/count', async (req, res) => {
+  try {
+    const result = await db.select({ value: count() })
+      .from(businesses)
+      .where(eq(businesses.isActive, true));
+    res.json({ count: result[0].value });
+  } catch (error) {
+    console.error('Error counting businesses:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
 // Get public directory of businesses
 publicRouter.get('/businesses', async (req, res) => {
   try {
-    const { search, category, city } = req.query;
+    const { search, category, city, limit, offset } = req.query;
 
     let conditions = [];
     conditions.push(eq(businesses.isActive, true));
@@ -37,7 +50,9 @@ publicRouter.get('/businesses', async (req, res) => {
     })
     .from(businesses)
     .leftJoin(categories, eq(businesses.categoryId, categories.id))
-    .where(whereClause);
+    .where(whereClause)
+    .limit(limit ? parseInt(limit as string) : 50)
+    .offset(offset ? parseInt(offset as string) : 0);
 
     res.json(result);
   } catch (error) {

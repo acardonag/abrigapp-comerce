@@ -12,7 +12,7 @@ publicRouter.get('/businesses/count', async (req, res) => {
     const result = await db.select({ value: count() })
       .from(businesses)
       .where(eq(businesses.isActive, true));
-    res.json({ count: result[0].value });
+    res.json({ count: result[0]?.value || 0 });
   } catch (error) {
     console.error('Error counting businesses:', error);
     res.status(500).json({ error: 'Internal server error' });

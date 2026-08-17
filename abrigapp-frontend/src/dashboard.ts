@@ -227,7 +227,7 @@ const renderDashboard = () => {
                             <tr>
                                 <td><img src="${p.imageUrl || '/default-product.png'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
                                 <td class="fw-semibold">${p.title}</td>
-                                <td>$ ${Number(p.price).toLocaleString('es-CO')}</td>
+                                <td>${Number(p.price) === -1 ? '<span class="text-muted fst-italic">A convenir</span>' : '$ ' + Number(p.price).toLocaleString('es-CO')}</td>
                                 <td><span class="badge ${p.isAvailable ? 'bg-success' : 'bg-secondary'}">${p.isAvailable ? 'Disponible' : 'Oculto'}</span></td>
                                 <td class="text-end">
                                     <button class="btn btn-sm btn-light text-primary" onclick='showProductModal(${JSON.stringify(p).replace(/'/g, "&apos;")})'><i class="ri-edit-2-line"></i></button>
@@ -265,7 +265,20 @@ window.showProductModal = (product: any = null) => {
         (document.getElementById('productId') as HTMLInputElement).value = product.id;
         (document.getElementById('productName') as HTMLInputElement).value = product.title || product.name || '';
         (document.getElementById('productDesc') as HTMLTextAreaElement).value = product.description || '';
-        (document.getElementById('productPrice') as HTMLInputElement).value = (product.price || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        
+        const priceInput = document.getElementById('productPrice') as HTMLInputElement;
+        const negotiableCb = document.getElementById('priceNegotiable') as HTMLInputElement;
+        if (Number(product.price) === -1) {
+            negotiableCb.checked = true;
+            priceInput.value = '';
+            priceInput.disabled = true;
+            priceInput.required = false;
+        } else {
+            negotiableCb.checked = false;
+            priceInput.disabled = false;
+            priceInput.required = true;
+            priceInput.value = (product.price || 0).toString().replace(/\B(?=(\d{3})+(?!\d))/g, '.');
+        }
         (document.getElementById('productAvailable') as HTMLInputElement).checked = product.isAvailable;
         if (product.imageUrl) {
             document.getElementById('currentImageUrl')!.style.display = 'block';
@@ -275,6 +288,11 @@ window.showProductModal = (product: any = null) => {
     } else {
         document.getElementById('productModalTitle')!.textContent = 'Agregar Producto';
         (document.getElementById('productId') as HTMLInputElement).value = '';
+        const priceInput = document.getElementById('productPrice') as HTMLInputElement;
+        const negotiableCb = document.getElementById('priceNegotiable') as HTMLInputElement;
+        negotiableCb.checked = false;
+        priceInput.disabled = false;
+        priceInput.required = true;
         document.getElementById('currentImageUrl')!.style.display = 'none';
     }
 
@@ -317,7 +335,7 @@ window.saveProduct = async (e: Event) => {
         const payload: any = {
             title: (document.getElementById('productName') as HTMLInputElement).value,
             description: (document.getElementById('productDesc') as HTMLTextAreaElement).value,
-            price: parseFloat((document.getElementById('productPrice') as HTMLInputElement).value.replace(/\./g, '')),
+            price: (document.getElementById('priceNegotiable') as HTMLInputElement).checked ? -1 : parseFloat((document.getElementById('productPrice') as HTMLInputElement).value.replace(/\./g, '')),
             isAvailable: (document.getElementById('productAvailable') as HTMLInputElement).checked,
         };
 

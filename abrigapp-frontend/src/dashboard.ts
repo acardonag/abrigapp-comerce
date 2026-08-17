@@ -104,6 +104,7 @@ const renderSetupProfile = () => {
                                     <option value="Armenia">Armenia</option>
                                     <option value="Buenaventura">Buenaventura</option>
                                     <option value="Cali">Cali</option>
+                                    <option value="Dosquebradas">Dosquebradas</option>
                                     <option value="Manizales">Manizales</option>
                                     <option value="Pereira">Pereira</option>
                                     <option value="Quibdó">Quibdó</option>
@@ -225,7 +226,7 @@ const renderDashboard = () => {
                         ${products.length === 0 ? `<tr><td colspan="5" class="text-center py-4 text-muted">Aún no tienes productos registrados. ¡Agrega tu primer producto!</td></tr>` : ''}
                         ${products.map(p => `
                             <tr>
-                                <td><img src="${p.imageUrl || '/default-product.png'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
+                                <td><img src="${p.imageUrl || '/default-product.jpg'}" style="width: 50px; height: 50px; object-fit: cover; border-radius: 8px;"></td>
                                 <td class="fw-semibold">${p.title}</td>
                                 <td>${Number(p.price) === -1 ? '<span class="text-muted fst-italic">A convenir</span>' : '$ ' + Number(p.price).toLocaleString('es-CO')}</td>
                                 <td><span class="badge ${p.isAvailable ? 'bg-success' : 'bg-secondary'}">${p.isAvailable ? 'Disponible' : 'Oculto'}</span></td>

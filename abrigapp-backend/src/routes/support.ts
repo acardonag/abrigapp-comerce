@@ -72,7 +72,7 @@ supportRouter.get('/verify/:token', async (req: Request, res: Response) => {
     }
     
     // Fire and forget email notification
-    sendNewCaseNotificationToVolunteers(volunteerEmails, supportCase.name, supportCase.city).catch(console.error);
+    sendNewCaseNotificationToVolunteers(volunteerEmails, supportCase!.name, supportCase!.city || '').catch(console.error);
 
     res.json({ message: 'Correo verificado con éxito' });
   } catch (error) {

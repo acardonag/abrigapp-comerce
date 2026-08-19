@@ -15,7 +15,7 @@ export const authenticateVolunteer = (req: Request, res: Response, next: Functio
 
   const token = authHeader.split(' ')[1];
   try {
-    const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret');
+    const decoded = jwt.verify(token, (process.env.JWT_SECRET as string) || 'secret');
     (req as any).user = decoded;
     next();
   } catch (err) {

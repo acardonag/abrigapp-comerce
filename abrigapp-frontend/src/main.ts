@@ -23,7 +23,7 @@ declare global {
 }
 
 let currentPage = 0;
-const pageSize = 10;
+const pageSize = 12;
 
 // UI Helpers for Login Modal
 const showLoginError = (msg: string) => {

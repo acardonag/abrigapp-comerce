@@ -1,6 +1,6 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../db';
-import { businesses, products } from '../db/schema';
+import { businesses, products, volunteers } from '../db/schema';
 import { eq } from 'drizzle-orm';
 import jwt from 'jsonwebtoken';
 import { authenticateAdmin } from '../middlewares/auth';
@@ -70,5 +70,50 @@ superadminRouter.delete('/product/:id', async (req: Request, res: Response) => {
     res.json({ message: 'Product deleted successfully' });
   } catch (error) {
     res.status(500).json({ error: 'Error deleting product' });
+  }
+});
+
+// Create a volunteer
+superadminRouter.post('/volunteer', async (req: Request, res: Response) => {
+  try {
+    const { email, password, name, phone } = req.body;
+    
+    // In a real app we'd hash the password here with bcrypt.
+    await db.insert(volunteers).values({
+      email,
+      passwordHash: password, // plain text for prototype ease, should be hashed
+      name,
+      phone,
+      isActive: true
+    });
+    
+    res.json({ message: 'Volunteer created successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error creating volunteer' });
+  }
+});
+
+// List volunteers
+superadminRouter.get('/volunteers', async (req: Request, res: Response) => {
+  try {
+    const allVolunteers = await db.select().from(volunteers);
+    res.json(allVolunteers);
+  } catch (error) {
+    res.status(500).json({ error: 'Error fetching volunteers' });
+  }
+});
+
+// Delete volunteer
+superadminRouter.delete('/volunteer/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const [deleted] = await db.delete(volunteers).where(eq(volunteers.id, id as string)).returning();
+    if (!deleted) {
+      res.status(404).json({ error: 'Volunteer not found' });
+      return;
+    }
+    res.json({ message: 'Volunteer deleted successfully' });
+  } catch (error) {
+    res.status(500).json({ error: 'Error deleting volunteer' });
   }
 });

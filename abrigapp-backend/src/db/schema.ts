@@ -43,3 +43,38 @@ export const products = pgTable("products", {
   createdAt: timestamp("created_at").defaultNow().notNull(),
   updatedAt: timestamp("updated_at").defaultNow().notNull(),
 });
+
+export const volunteers = pgTable("volunteers", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  email: varchar("email", { length: 255 }).unique().notNull(),
+  passwordHash: varchar("password_hash", { length: 255 }).notNull(),
+  name: varchar("name", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }),
+  isActive: boolean("is_active").default(true).notNull(),
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+
+export const supportCases = pgTable("support_cases", {
+  id: uuid("id").primaryKey().defaultRandom(),
+  name: varchar("name", { length: 255 }).notNull(),
+  email: varchar("email", { length: 255 }).notNull(),
+  phone: varchar("phone", { length: 50 }).notNull(),
+  city: varchar("city", { length: 255 }).notNull(),
+  description: text("description").notNull(),
+  
+  status: varchar("status", { length: 50 }).default("Aplicado").notNull(), // Aplicado, En revision, Aprobado, Rechazado, Expirado
+  magicToken: varchar("magic_token", { length: 255 }),
+  isEmailVerified: boolean("is_email_verified").default(false).notNull(),
+  
+  // Volunteer filled data
+  supportType: varchar("support_type", { length: 255 }), // especie, economica, etc
+  youtubeUrl: varchar("youtube_url", { length: 1024 }),
+  imageUrls: text("image_urls"), // JSON stringified array
+  donationAccount: text("donation_account"),
+  
+  publishedAt: timestamp("published_at"), // set when status = Aprobado
+  createdAt: timestamp("created_at").defaultNow().notNull(),
+  updatedAt: timestamp("updated_at").defaultNow().notNull(),
+});
+

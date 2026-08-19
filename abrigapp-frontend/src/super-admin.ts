@@ -14,6 +14,8 @@ declare global {
         logoutAdmin: () => void;
         switchTab: (tab: string) => void;
         deleteRecord: (id: string) => void;
+        showCreateVolunteerModal: () => void;
+        createVolunteer: (e: Event) => void;
     }
 }
 
@@ -65,6 +67,14 @@ window.switchTab = (tab: string) => {
     currentTab = tab;
     document.getElementById('tab-businesses')!.className = tab === 'businesses' ? 'nav-link active btn-danger-custom' : 'nav-link bg-white text-dark border';
     document.getElementById('tab-products')!.className = tab === 'products' ? 'nav-link active btn-danger-custom' : 'nav-link bg-white text-dark border';
+    document.getElementById('tab-volunteers')!.className = tab === 'volunteers' ? 'nav-link active btn-danger-custom' : 'nav-link bg-white text-dark border';
+    
+    if (tab === 'volunteers') {
+        document.getElementById('volunteerActions')!.classList.remove('d-none');
+    } else {
+        document.getElementById('volunteerActions')!.classList.add('d-none');
+    }
+    
     loadData();
 };
 
@@ -101,7 +111,7 @@ const renderTable = () => {
                 </td>
             </tr>
         `).join('') || `<tr><td colspan="5" class="text-center py-4">No hay comercios</td></tr>`;
-    } else {
+    } else if (currentTab === 'products') {
         tableHead.innerHTML = `<tr><th>Producto</th><th>Precio</th><th>Disponible</th><th class="text-end">Acción</th></tr>`;
         tableBody.innerHTML = dataList.map(p => `
             <tr>
@@ -113,15 +123,32 @@ const renderTable = () => {
                 </td>
             </tr>
         `).join('') || `<tr><td colspan="4" class="text-center py-4">No hay productos</td></tr>`;
+    } else if (currentTab === 'volunteers') {
+        tableHead.innerHTML = `<tr><th>Nombre</th><th>Email</th><th>Celular</th><th class="text-end">Acción</th></tr>`;
+        tableBody.innerHTML = dataList.map(v => `
+            <tr>
+                <td class="fw-bold">${v.name}</td>
+                <td>${v.email}</td>
+                <td>${v.phone || 'N/A'}</td>
+                <td class="text-end">
+                    <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord('${v.id}')"><i class="ri-delete-bin-line"></i> Eliminar</button>
+                </td>
+            </tr>
+        `).join('') || `<tr><td colspan="4" class="text-center py-4">No hay voluntarios</td></tr>`;
     }
 };
 
 window.deleteRecord = async (id: string) => {
-    const typeName = currentTab === 'businesses' ? 'comercio y todos sus productos' : 'producto';
+    let typeName = currentTab === 'businesses' ? 'comercio y todos sus productos' : 'producto';
+    if (currentTab === 'volunteers') typeName = 'voluntario';
+    
     if (!confirm(`¿Estás seguro de eliminar este ${typeName} permanentemente? Esto no se puede deshacer.`)) return;
 
     try {
-        const endpoint = currentTab === 'businesses' ? `/api/superadmin/business/${id}` : `/api/superadmin/product/${id}`;
+        let endpoint = `/api/superadmin/product/${id}`;
+        if (currentTab === 'businesses') endpoint = `/api/superadmin/business/${id}`;
+        if (currentTab === 'volunteers') endpoint = `/api/superadmin/volunteer/${id}`;
+        
         const res = await fetch(endpoint, {
             method: 'DELETE',
             headers: { 'Authorization': `Bearer ${adminToken}` }
@@ -133,6 +160,39 @@ window.deleteRecord = async (id: string) => {
         }
     } catch (err) {
         alert('Error conectando al servidor');
+    }
+};
+
+window.showCreateVolunteerModal = () => {
+    // @ts-ignore
+    const modal = new bootstrap.Modal(document.getElementById('volunteerModal'));
+    modal.show();
+};
+
+window.createVolunteer = async (e: Event) => {
+    e.preventDefault();
+    const name = (document.getElementById('volName') as HTMLInputElement).value;
+    const email = (document.getElementById('volEmail') as HTMLInputElement).value;
+    const password = (document.getElementById('volPass') as HTMLInputElement).value;
+    const phone = (document.getElementById('volPhone') as HTMLInputElement).value;
+
+    try {
+        const res = await fetch('/api/superadmin/volunteer', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
+            body: JSON.stringify({ name, email, password, phone })
+        });
+        
+        if (res.ok) {
+            // @ts-ignore
+            bootstrap.Modal.getInstance(document.getElementById('volunteerModal')).hide();
+            (document.getElementById('volunteerForm') as HTMLFormElement).reset();
+            loadData();
+        } else {
+            alert('Error al crear voluntario');
+        }
+    } catch (err) {
+        alert('Error de conexión');
     }
 };
 

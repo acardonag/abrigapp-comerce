@@ -93,3 +93,39 @@ export const sendReportEmail = async (type: string, name: string, reason: string
     throw error;
   }
 };
+
+export const sendSupportVerificationEmail = async (to: string, name: string, verificationUrl: string) => {
+  try {
+    const info = await transporter.sendMail({
+      from: '"AbrigApp" <b5a680001@smtp-brevo.com>',
+      to: to,
+      subject: "Verifica tu solicitud de apoyo - AbrigApp",
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center; color: #333;">
+            <img src="https://abrigapp.com/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px;">
+            <h2 style="color: #2b7a78;">¡Hola, ${name}!</h2>
+            <p style="font-size: 16px;">Hemos recibido tu solicitud en la sección <strong>En busca de apoyo!</strong></p>
+            <p style="font-size: 16px;">Para poder continuar con el proceso y enviar tu caso a revisión por parte de nuestros voluntarios, necesitamos verificar que este correo es real.</p>
+            
+            <div style="margin: 30px 0;">
+                <a href="${verificationUrl}" style="background-color: #3aafa9; color: white; padding: 15px 30px; text-decoration: none; border-radius: 30px; font-weight: bold; font-size: 18px;">Verificar mi correo</a>
+            </div>
+            
+            <p style="font-size: 14px; color: #666; margin-top: 40px;">Si no fuiste tú, puedes ignorar este correo.</p>
+            
+            <hr style="border: none; border-top: 1px solid #eee; margin: 20px 0;">
+            <div style="margin-top: 20px;">
+                <a href="https://www.instagram.com/abrigappcolombia/" style="margin: 0 10px; color: #2b7a78; text-decoration: none;">Instagram</a>
+                <a href="https://www.tiktok.com/@abrigapp3" style="margin: 0 10px; color: #2b7a78; text-decoration: none;">TikTok</a>
+                <a href="https://www.facebook.com/profile.php?id=61593364442497" style="margin: 0 10px; color: #2b7a78; text-decoration: none;">Facebook</a>
+            </div>
+        </div>
+      `,
+    });
+    console.log('Verification email sent:', info.messageId);
+    return true;
+  } catch (error) {
+    console.error('Error sending verification email:', error);
+    return false;
+  }
+};

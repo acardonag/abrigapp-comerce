@@ -97,7 +97,7 @@ export const sendReportEmail = async (type: string, name: string, reason: string
 export const sendSupportVerificationEmail = async (to: string, name: string, verificationUrl: string) => {
   try {
     const info = await transporter.sendMail({
-      from: '"AbrigApp" <b5a680001@smtp-brevo.com>',
+      from: `"AbrigApp Apoyo" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
       to: to,
       subject: "Verifica tu solicitud de apoyo - AbrigApp",
       html: `

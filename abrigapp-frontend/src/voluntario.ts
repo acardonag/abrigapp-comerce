@@ -192,8 +192,42 @@ window.updateCase = async (e: Event) => {
         
         // Upload photo if selected
         if (photoInput.files && photoInput.files.length > 0) {
+            const file = photoInput.files[0];
+            
+            // Compresión de imagen del lado del cliente para evitar límite 4.5MB/10s de Vercel Proxy
+            const compressedFile = await new Promise<File>((resolve, reject) => {
+                const reader = new FileReader();
+                reader.readAsDataURL(file);
+                reader.onload = (event) => {
+                    const img = new Image();
+                    img.src = event.target?.result as string;
+                    img.onload = () => {
+                        const canvas = document.createElement('canvas');
+                        let width = img.width;
+                        let height = img.height;
+                        const maxDim = 1000;
+                        if (width > height && width > maxDim) {
+                            height *= maxDim / width;
+                            width = maxDim;
+                        } else if (height > maxDim) {
+                            width *= maxDim / height;
+                            height = maxDim;
+                        }
+                        canvas.width = width;
+                        canvas.height = height;
+                        const ctx = canvas.getContext('2d');
+                        ctx?.drawImage(img, 0, 0, width, height);
+                        canvas.toBlob((blob) => {
+                            if (blob) resolve(new File([blob], file.name, { type: file.type || 'image/jpeg' }));
+                            else reject(new Error("Fallo al comprimir imagen"));
+                        }, file.type || 'image/jpeg', 0.7);
+                    };
+                };
+                reader.onerror = error => reject(error);
+            });
+
             const formData = new FormData();
-            formData.append('file', photoInput.files[0]);
+            formData.append('file', compressedFile);
             
             const uploadRes = await fetch('/api/upload', {
                 method: 'POST',
@@ -202,7 +236,7 @@ window.updateCase = async (e: Event) => {
             });
             
             if (!uploadRes.ok) {
-                throw new Error('Error al subir la imagen');
+                throw new Error('Error al subir la imagen. Intenta con una foto más pequeña.');
             }
             const uploadData = await uploadRes.json();
             imageUrls = [uploadData.url];

@@ -132,11 +132,11 @@ window.openReviewModal = (id: string) => {
     if (!c) return;
     
     document.getElementById('caseId')!.value = c.id;
-    document.getElementById('caseName')!.textContent = c.name;
-    document.getElementById('caseEmail')!.textContent = c.email;
-    document.getElementById('casePhone')!.textContent = c.phone;
-    document.getElementById('caseCity')!.textContent = c.city;
-    document.getElementById('caseDescription')!.textContent = c.description;
+    (document.getElementById('updateName') as HTMLInputElement).value = c.name;
+    (document.getElementById('updateEmail') as HTMLInputElement).value = c.email;
+    (document.getElementById('updatePhone') as HTMLInputElement).value = c.phone;
+    (document.getElementById('updateCity') as HTMLInputElement).value = c.city;
+    (document.getElementById('updateDescription') as HTMLInputElement).value = c.description;
     
     const badge = document.getElementById('caseStatusBadge')!;
     badge.textContent = c.status;
@@ -157,22 +157,67 @@ window.openReviewModal = (id: string) => {
 window.updateCase = async (e: Event) => {
     e.preventDefault();
     const id = (document.getElementById('caseId') as HTMLInputElement).value;
+    const name = (document.getElementById('updateName') as HTMLInputElement).value;
+    const email = (document.getElementById('updateEmail') as HTMLInputElement).value;
+    const phone = (document.getElementById('updatePhone') as HTMLInputElement).value;
+    const city = (document.getElementById('updateCity') as HTMLInputElement).value;
+    const description = (document.getElementById('updateDescription') as HTMLInputElement).value;
+    
     const status = (document.getElementById('updateStatus') as HTMLSelectElement).value;
-    const supportType = (document.getElementById('updateType') as HTMLInputElement).value;
+    const supportType = (document.getElementById('updateType') as HTMLSelectElement).value;
     const donationAccount = (document.getElementById('updateAccount') as HTMLInputElement).value;
     const youtubeUrl = (document.getElementById('updateYoutube') as HTMLInputElement).value;
+    const photoInput = document.getElementById('updatePhoto') as HTMLInputElement;
     const err = document.getElementById('updateError')!;
+    const submitBtn = (e.target as HTMLFormElement).querySelector('button[type="submit"]') as HTMLButtonElement;
     
     try {
+        submitBtn.disabled = true;
+        submitBtn.textContent = 'Guardando...';
+        
+        let imageUrls = undefined;
+        const c = allCases.find(x => x.id === id);
+        
+        // Ensure photo if approved and no previous photo exists
+        if (status === 'Aprobado') {
+            const hasExistingPhoto = c?.imageUrls && JSON.parse(c.imageUrls).length > 0;
+            if (!hasExistingPhoto && (!photoInput.files || photoInput.files.length === 0)) {
+                err.textContent = 'Debe adjuntar una foto para aprobar y publicar el caso.';
+                err.classList.remove('d-none');
+                submitBtn.disabled = false;
+                submitBtn.textContent = 'Guardar Cambios';
+                return;
+            }
+        }
+        
+        // Upload photo if selected
+        if (photoInput.files && photoInput.files.length > 0) {
+            const formData = new FormData();
+            formData.append('file', photoInput.files[0]);
+            
+            const uploadRes = await fetch('/api/upload', {
+                method: 'POST',
+                headers: { 'Authorization': `Bearer ${volunteerToken}` },
+                body: formData
+            });
+            
+            if (!uploadRes.ok) {
+                throw new Error('Error al subir la imagen');
+            }
+            const uploadData = await uploadRes.json();
+            imageUrls = [uploadData.url];
+        }
+
         const res = await fetch(`/api/volunteer/case/${id}`, {
             method: 'PUT',
             headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${volunteerToken}` },
-            body: JSON.stringify({ status, supportType, donationAccount, youtubeUrl })
+            body: JSON.stringify({ name, email, phone, city, description, status, supportType, donationAccount, youtubeUrl, imageUrls })
         });
         
         const data = await res.json();
         
         if (res.ok) {
+            photoInput.value = ''; // Reset photo input
             // @ts-ignore
             bootstrap.Modal.getInstance(document.getElementById('reviewModal')).hide();
             window.loadCases();
@@ -180,9 +225,12 @@ window.updateCase = async (e: Event) => {
             err.textContent = data.error || 'Error al actualizar caso';
             err.classList.remove('d-none');
         }
-    } catch (error) {
-        err.textContent = 'Error de conexión';
+    } catch (error: any) {
+        err.textContent = error.message || 'Error de conexión';
         err.classList.remove('d-none');
+    } finally {
+        submitBtn.disabled = false;
+        submitBtn.textContent = 'Guardar Cambios';
     }
 };
 

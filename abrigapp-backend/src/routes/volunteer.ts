@@ -69,7 +69,7 @@ volunteerRouter.get('/cases', async (req: Request, res: Response) => {
 volunteerRouter.put('/case/:id', async (req: Request, res: Response) => {
   try {
     const { id } = req.params;
-    const { status, supportType, youtubeUrl, imageUrls, donationAccount } = req.body;
+    const { name, email, phone, city, description, status, supportType, youtubeUrl, imageUrls, donationAccount } = req.body;
     
     // Check limit of 20 active cases if we are approving
     if (status === 'Aprobado') {
@@ -83,13 +83,21 @@ volunteerRouter.put('/case/:id', async (req: Request, res: Response) => {
     }
 
     const updateData: any = {
+      name,
+      email,
+      phone,
+      city,
+      description,
       status,
       supportType,
       youtubeUrl,
-      imageUrls: imageUrls ? JSON.stringify(imageUrls) : null,
       donationAccount,
       updatedAt: new Date()
     };
+    
+    if (imageUrls !== undefined) {
+      updateData.imageUrls = imageUrls ? JSON.stringify(imageUrls) : null;
+    }
 
     if (status === 'Aprobado') {
       const currentCase = await db.select().from(supportCases).where(eq(supportCases.id, id as string));

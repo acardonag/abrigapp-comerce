@@ -104,32 +104,32 @@
                     <div class="row mb-4">
                         <div class="col-md-6">
                             <p class="mb-1 text-muted small">Nombre del solicitante</p>
-                            <h5 class="fw-bold" id="caseName"></h5>
+                            <input type="text" id="updateName" class="form-control fw-bold fs-5" required>
                         </div>
-                        <div class="col-md-6 text-md-end">
+                        <div class="col-md-6 text-md-end mt-3 mt-md-0 d-flex align-items-center justify-content-md-end">
                             <span class="badge" id="caseStatusBadge"></span>
                         </div>
                     </div>
                     
-                    <div class="bg-light p-3 rounded-3 mb-4">
+                    <div class="bg-light p-3 rounded-3 mb-4 border">
                         <div class="row g-3">
                             <div class="col-md-4">
-                                <p class="mb-0 text-muted small"><i class="ri-mail-line me-1"></i>Correo</p>
-                                <span class="fw-medium" id="caseEmail"></span>
+                                <p class="mb-1 text-muted small"><i class="ri-mail-line me-1"></i>Correo</p>
+                                <input type="email" id="updateEmail" class="form-control form-control-sm" required>
                             </div>
                             <div class="col-md-4">
-                                <p class="mb-0 text-muted small"><i class="ri-phone-line me-1"></i>Celular</p>
-                                <span class="fw-medium" id="casePhone"></span>
+                                <p class="mb-1 text-muted small"><i class="ri-phone-line me-1"></i>Celular</p>
+                                <input type="text" id="updatePhone" class="form-control form-control-sm" required>
                             </div>
                             <div class="col-md-4">
-                                <p class="mb-0 text-muted small"><i class="ri-map-pin-line me-1"></i>Ciudad</p>
-                                <span class="fw-medium" id="caseCity"></span>
+                                <p class="mb-1 text-muted small"><i class="ri-map-pin-line me-1"></i>Ciudad</p>
+                                <input type="text" id="updateCity" class="form-control form-control-sm" required>
                             </div>
                         </div>
                     </div>
                     
                     <h6 class="fw-bold">Descripción del Caso:</h6>
-                    <p id="caseDescription" class="text-secondary bg-light p-3 rounded-3 mb-4" style="line-height: 1.6;"></p>
+                    <textarea id="updateDescription" class="form-control mb-4" rows="4" required></textarea>
 
                     <hr class="text-muted opacity-25 mb-4">
                     
@@ -148,8 +148,21 @@
                             </div>
                             <div class="col-md-6">
                                 <label class="form-label fw-medium">Tipo de Apoyo Sugerido</label>
-                                <input type="text" id="updateType" class="form-control bg-light" placeholder="Ej: Económico, En Especie, Alimentos...">
+                                <select id="updateType" class="form-select bg-light">
+                                    <option value="">Seleccione un tipo (Opcional)</option>
+                                    <option value="Apoyo Económico">Apoyo Económico</option>
+                                    <option value="Apoyo en Especie">Apoyo en Especie</option>
+                                    <option value="Servicios Profesionales">Servicios Profesionales</option>
+                                    <option value="Voluntariado Presencial">Voluntariado Presencial</option>
+                                    <option value="Otro">Otro</option>
+                                </select>
                             </div>
+                        </div>
+                        
+                        <div class="mb-3">
+                            <label class="form-label fw-medium">Foto del Caso</label>
+                            <input type="file" id="updatePhoto" class="form-control bg-light" accept="image/*">
+                            <small class="text-muted">Si apruebas el caso, debes adjuntar una foto obligatoria. Si ya existe, puedes dejarlo vacío para mantener la actual.</small>
                         </div>
                         
                         <div class="mb-3">

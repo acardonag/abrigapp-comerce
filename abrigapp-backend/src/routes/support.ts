@@ -1,9 +1,9 @@
 import { Router, Request, Response } from 'express';
 import { db } from '../db';
-import { supportCases } from '../db/schema';
+import { supportCases, volunteers } from '../db/schema';
 import { eq, and, desc } from 'drizzle-orm';
 import crypto from 'crypto';
-import { sendSupportVerificationEmail } from '../services/email'; // We will create this
+import { sendSupportVerificationEmail, sendNewCaseNotificationToVolunteers } from '../services/email'; // We will create this
 
 export const supportRouter = Router();
 
@@ -62,6 +62,17 @@ supportRouter.get('/verify/:token', async (req: Request, res: Response) => {
     await db.update(supportCases)
       .set({ isEmailVerified: true, status: 'En revision', magicToken: null })
       .where(eq(supportCases.id, supportCase!.id));
+
+    // Fetch all active volunteers to notify them
+    const allVolunteers = await db.select({ email: volunteers.email }).from(volunteers).where(eq(volunteers.isActive, true));
+    const volunteerEmails = allVolunteers.map(v => v.email);
+    // Add the specific requested email if not already there
+    if (!volunteerEmails.includes('acg1606@gmail.com')) {
+      volunteerEmails.push('acg1606@gmail.com');
+    }
+    
+    // Fire and forget email notification
+    sendNewCaseNotificationToVolunteers(volunteerEmails, supportCase.name, supportCase.city).catch(console.error);
 
     res.json({ message: 'Correo verificado con éxito' });
   } catch (error) {

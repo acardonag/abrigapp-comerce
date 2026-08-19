@@ -129,3 +129,42 @@ export const sendSupportVerificationEmail = async (to: string, name: string, ver
     return false;
   }
 };
+
+export const sendNewCaseNotificationToVolunteers = async (bccEmails: string[], caseName: string, city: string) => {
+  if (!bccEmails || bccEmails.length === 0) return false;
+  
+  try {
+    const info = await transporter.sendMail({
+      from: `"AbrigApp Sistema" <${process.env.SMTP_FROM || process.env.SMTP_USER}>`,
+      to: 'abrigappcolombia@gmail.com', // Hidden main recipient, actual recipients in BCC
+      bcc: bccEmails,
+      subject: `NUEVO CASO PARA REVISIÓN: ${caseName} en ${city}`,
+      html: `
+        <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; color: #333; border: 1px solid #ddd; border-radius: 8px; padding: 20px;">
+            <div style="text-align: center; margin-bottom: 20px;">
+                <img src="https://www.abrigapp.org/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 80px; height: 80px; border-radius: 50%;">
+            </div>
+            <h2 style="color: #2b7a78; text-align: center;">¡Atención Voluntarios!</h2>
+            <p style="font-size: 16px;">Un nuevo caso ha verificado su correo electrónico y está listo para ser revisado por un voluntario.</p>
+            
+            <div style="background-color: #f9f9f9; padding: 15px; border-left: 4px solid #3aafa9; margin: 20px 0;">
+                <p><strong>Solicitante:</strong> ${caseName}</p>
+                <p><strong>Ciudad:</strong> ${city}</p>
+                <p><strong>Estado:</strong> En revisión</p>
+            </div>
+            
+            <div style="text-align: center; margin: 30px 0;">
+                <a href="https://www.abrigapp.org/voluntario.html" style="background-color: #3aafa9; color: white; padding: 12px 25px; text-decoration: none; border-radius: 5px; font-weight: bold; font-size: 16px;">Ir al Panel de Voluntarios</a>
+            </div>
+            
+            <p style="font-size: 13px; color: #666; text-align: center; margin-top: 30px;">Gracias por tu dedicación y apoyo a AbrigApp.</p>
+        </div>
+      `,
+    });
+    console.log(`Notification email sent to volunteers. MessageId: ${info.messageId}`);
+    return true;
+  } catch (error) {
+    console.error('Error sending volunteer notification email:', error);
+    return false;
+  }
+};

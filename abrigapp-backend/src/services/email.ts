@@ -102,7 +102,7 @@ export const sendSupportVerificationEmail = async (to: string, name: string, ver
       subject: "Verifica tu solicitud de apoyo - AbrigApp",
       html: `
         <div style="font-family: Arial, sans-serif; max-width: 600px; margin: 0 auto; text-align: center; color: #333;">
-            <img src="https://abrigapp.com/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px;">
+            <img src="https://www.abrigapp.org/logo_abrigapp.jpg" alt="AbrigApp Logo" style="width: 100px; height: 100px; border-radius: 50%; margin-bottom: 20px;">
             <h2 style="color: #2b7a78;">¡Hola, ${name}!</h2>
             <p style="font-size: 16px;">Hemos recibido tu solicitud en la sección <strong>En busca de apoyo!</strong></p>
             <p style="font-size: 16px;">Para poder continuar con el proceso y enviar tu caso a revisión por parte de nuestros voluntarios, necesitamos verificar que este correo es real.</p>

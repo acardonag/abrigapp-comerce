@@ -1,5 +1,3 @@
-import './index.css';
-
 declare global {
     interface Window {
         showApplyModal: () => void;

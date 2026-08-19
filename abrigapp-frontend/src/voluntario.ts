@@ -1,5 +1,3 @@
-import './index.css';
-
 let volunteerToken = localStorage.getItem('abrigapp_volunteer_token');
 let volunteerInfo = JSON.parse(localStorage.getItem('abrigapp_volunteer_info') || 'null');
 let allCases: any[] = [];

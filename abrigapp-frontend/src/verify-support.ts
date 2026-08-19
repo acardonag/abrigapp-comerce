@@ -1,5 +1,3 @@
-import './index.css';
-
 document.addEventListener('DOMContentLoaded', async () => {
     const urlParams = new URLSearchParams(window.location.search);
     const token = urlParams.get('token');

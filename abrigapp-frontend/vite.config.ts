@@ -8,7 +8,10 @@ export default defineConfig({
         main: resolve(__dirname, 'index.html'),
         dashboard: resolve(__dirname, 'dashboard.html'),
         tienda: resolve(__dirname, 'tienda.html'),
-        superadmin: resolve(__dirname, 'super-admin.html')
+        superadmin: resolve(__dirname, 'super-admin.html'),
+        apoyo: resolve(__dirname, 'apoyo.html'),
+        voluntario: resolve(__dirname, 'voluntario.html'),
+        verify_support: resolve(__dirname, 'verify-support.html')
       }
     }
   },

@@ -28,18 +28,16 @@ volunteerRouter.post('/login', async (req: Request, res: Response) => {
   const { email, password } = req.body;
   
   try {
-    const result = await db.select().from(volunteers).where(eq(volunteers.email, email));
+    const result = await db.select().from(volunteers).where(eq(volunteers.email, email as string));
     if (result.length === 0) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
     
     const volunteer = result[0];
-    if (!volunteer.isActive) {
+    if (!volunteer || !volunteer.isActive) {
       return res.status(401).json({ error: 'Cuenta inactiva' });
     }
     
-    // In a real scenario, use bcrypt.compare. For this prototype, if passwordHash is plain, compare directly or hash.
-    // Assuming passwordHash was saved as plain text or simple hash by SuperAdmin
     if (volunteer.passwordHash !== password) {
       return res.status(401).json({ error: 'Credenciales inválidas' });
     }
@@ -73,7 +71,7 @@ volunteerRouter.put('/case/:id', async (req: Request, res: Response) => {
     // Check limit of 20 active cases if we are approving
     if (status === 'Aprobado') {
       const activeCases = await db.select().from(supportCases).where(eq(supportCases.status, 'Aprobado'));
-      const currentCase = await db.select().from(supportCases).where(eq(supportCases.id, id));
+      const currentCase = await db.select().from(supportCases).where(eq(supportCases.id, id as string));
       
       // If it's not already approved, check limit
       if (currentCase[0] && currentCase[0].status !== 'Aprobado' && activeCases.length >= 20) {
@@ -91,13 +89,13 @@ volunteerRouter.put('/case/:id', async (req: Request, res: Response) => {
     };
 
     if (status === 'Aprobado') {
-      const currentCase = await db.select().from(supportCases).where(eq(supportCases.id, id));
+      const currentCase = await db.select().from(supportCases).where(eq(supportCases.id, id as string));
       if (currentCase[0] && currentCase[0].status !== 'Aprobado') {
         updateData.publishedAt = new Date(); // Stamp the publishing time
       }
     }
 
-    await db.update(supportCases).set(updateData).where(eq(supportCases.id, id));
+    await db.update(supportCases).set(updateData).where(eq(supportCases.id, id as string));
     
     res.json({ message: 'Caso actualizado' });
   } catch (error) {

@@ -45,7 +45,7 @@ supportRouter.get('/verify/:token', async (req: Request, res: Response) => {
   try {
     const { token } = req.params;
     
-    const cases = await db.select().from(supportCases).where(eq(supportCases.magicToken, token));
+    const cases = await db.select().from(supportCases).where(eq(supportCases.magicToken, token as string));
     
     if (cases.length === 0) {
       res.status(404).json({ error: 'Enlace inválido o expirado' });
@@ -54,14 +54,14 @@ supportRouter.get('/verify/:token', async (req: Request, res: Response) => {
 
     const supportCase = cases[0];
     
-    if (supportCase.isEmailVerified) {
+    if (supportCase?.isEmailVerified) {
       res.json({ message: 'El correo ya fue verificado.' });
       return;
     }
 
     await db.update(supportCases)
       .set({ isEmailVerified: true, status: 'En revision', magicToken: null })
-      .where(eq(supportCases.id, supportCase.id));
+      .where(eq(supportCases.id, supportCase!.id));
 
     res.json({ message: 'Correo verificado con éxito' });
   } catch (error) {

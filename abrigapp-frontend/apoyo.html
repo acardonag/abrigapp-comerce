@@ -48,30 +48,16 @@
 </head>
 <body class="bg-light">
     <!-- Navbar -->
-    <nav class="navbar navbar-expand-lg sticky-top custom-navbar shadow-sm py-3">
-        <div class="container">
-            <a class="navbar-brand d-flex align-items-center" href="/">
-                <img src="/logo_abrigapp.jpg" alt="AbrigApp Logo" style="height: 45px; border-radius: 50%; margin-right: 12px; border: 2px solid white;">
-                <div class="d-flex flex-column">
-                    <span class="fw-bold fs-4 text-white lh-1">AbrigApp</span>
-                    <span class="text-white-50" style="font-size: 0.75rem; letter-spacing: 1px;">DIRECTORIO SOLIDARIO</span>
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-light sticky-top shadow-sm bg-white py-2">
+        <div class="container d-flex flex-nowrap align-items-center justify-content-between">
+            <a class="navbar-brand fw-bold fs-4 d-flex align-items-center gap-2 text-primary" href="/">
+                <img src="/logo_abrigapp.jpg" alt="AbrigApp Logo" height="45" class="d-inline-block align-text-top rounded-circle shadow-sm" style="object-fit: cover; aspect-ratio: 1/1;">
+                AbrigApp
             </a>
-            <button class="navbar-toggler border-0 shadow-none text-white" type="button" data-bs-toggle="collapse" data-bs-target="#navbarNav">
-                <i class="ri-menu-3-line fs-2"></i>
-            </button>
-            <div class="collapse navbar-collapse" id="navbarNav">
-                <ul class="navbar-nav mx-auto mb-2 mb-lg-0 align-items-center">
-                    <li class="nav-item">
-                        <a class="nav-link text-white fw-semibold px-3" href="/"><i class="ri-store-2-line me-1"></i>Directorio Local</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white fw-semibold px-3" href="/tienda.html"><i class="ri-shopping-bag-3-line me-1"></i>Tienda Central</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link text-white fw-bold px-3 ms-lg-2 rounded-pill bg-white text-primary" href="/apoyo.html">🙏 ¡En busca de apoyo!</a>
-                    </li>
-                </ul>
+            
+            <div class="d-flex align-items-center gap-2 gap-lg-3">
+                <a href="/tienda.html" class="btn btn-outline-primary rounded-pill fw-semibold px-3 px-md-4 d-none d-sm-block">Apoyar comercios</a>
+                <a href="/" class="btn btn-secondary-custom rounded-pill fw-semibold px-3 px-md-4">Soy un Comercio</a>
             </div>
         </div>
     </nav>

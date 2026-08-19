@@ -6,7 +6,6 @@
     <title>Verificando... AbrigApp</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
     <link href="https://cdn.jsdelivr.net/npm/remixicon@3.5.0/fonts/remixicon.css" rel="stylesheet">
-    
 </head>
 <body class="bg-light d-flex align-items-center justify-content-center" style="min-height: 100vh;">
     <div class="text-center p-5 bg-white rounded-4 shadow-sm" style="max-width: 500px; width: 100%;">
@@ -31,7 +30,10 @@
         </div>
     </div>
 
-    <script type="module">`n        import '/src/index.css';
+    <script type="module">
+        import '/src/index.css';
+    </script>
+    <script>
         document.addEventListener('DOMContentLoaded', async () => {
             const urlParams = new URLSearchParams(window.location.search);
             const token = urlParams.get('token');

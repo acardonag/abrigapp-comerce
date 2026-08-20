@@ -87,15 +87,47 @@ supportRouter.get('/public-cases', async (req: Request, res: Response) => {
     const { limit, offset } = req.query;
     
     const result = await db.select()
+    const cases = await db.select()
       .from(supportCases)
       .where(eq(supportCases.status, 'Aprobado'))
       .orderBy(desc(supportCases.publishedAt))
       .limit(limit ? parseInt(limit as string) : 20)
       .offset(offset ? parseInt(offset as string) : 0);
       
-    res.json(result);
+    res.json(cases);
   } catch (error) {
     console.error('Error fetching public cases:', error);
+    res.status(500).json({ error: 'Internal server error' });
+  }
+});
+
+// Get a single public approved case by ID
+supportRouter.get('/public-case/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const cases = await db.select({
+      id: supportCases.id,
+      name: supportCases.name,
+      city: supportCases.city,
+      description: supportCases.description,
+      supportType: supportCases.supportType,
+      youtubeUrl: supportCases.youtubeUrl,
+      imageUrls: supportCases.imageUrls,
+      donationAccount: supportCases.donationAccount,
+      phone: supportCases.phone,
+      publishedAt: supportCases.publishedAt
+    })
+    .from(supportCases)
+    .where(and(eq(supportCases.status, 'Aprobado'), eq(supportCases.id, id as string)));
+
+    if (cases.length === 0) {
+      res.status(404).json({ error: 'Caso no encontrado o inactivo' });
+      return;
+    }
+    
+    res.json(cases[0]);
+  } catch (error) {
+    console.error('Error fetching single public case:', error);
     res.status(500).json({ error: 'Internal server error' });
   }
 });

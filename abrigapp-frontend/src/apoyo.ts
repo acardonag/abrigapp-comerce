@@ -172,17 +172,98 @@ window.loadMoreCases = () => {
 };
 
 window.shareSupportCase = (name: string, id: string) => {
+    const shareUrl = `${window.location.origin}/apoyo.html?caseId=${id}`;
     if (navigator.share) {
         navigator.share({
             title: `Apoyemos a ${name}`,
             text: `Por favor apoya este caso en AbrigApp. Tu ayuda cuenta:`,
-            url: window.location.href,
+            url: shareUrl,
         }).catch(console.error);
     } else {
-        alert("Tu navegador no soporta la función de compartir, pero puedes copiar el enlace.");
+        navigator.clipboard.writeText(shareUrl).then(() => {
+            alert("¡Enlace copiado al portapapeles!");
+        }).catch(err => {
+            alert("No se pudo copiar el enlace. Cópialo manualmente: " + shareUrl);
+        });
     }
 };
 
-document.addEventListener('DOMContentLoaded', () => {
+document.addEventListener('DOMContentLoaded', async () => {
     renderCases(true);
+
+    // Check for direct case link
+    const urlParams = new URLSearchParams(window.location.search);
+    const caseId = urlParams.get('caseId');
+    
+    if (caseId) {
+        // @ts-ignore
+        const detailModal = new bootstrap.Modal(document.getElementById('caseDetailModal'));
+        detailModal.show();
+        
+        try {
+            const response = await fetch(`/api/support/public-case/${caseId}`);
+            if (!response.ok) throw new Error('Not found');
+            
+            const c = await response.json();
+            const daysLeft = calculateDaysRemaining(c.publishedAt);
+            
+            let mediaSection = `<div class="bg-light d-flex align-items-center justify-content-center" style="height: 300px;"><i class="ri-image-line fs-1 text-muted opacity-25"></i></div>`;
+            if (c.youtubeUrl) {
+                const match = c.youtubeUrl.match(/(?:youtu\.be\/|youtube\.com\/(?:embed\/|v\/|watch\?v=|watch\?.+&v=))([^&]{11})/);
+                if (match && match[1]) {
+                    mediaSection = `<iframe style="width: 100%; height: 350px;" src="https://www.youtube.com/embed/${match[1]}" frameborder="0" allowfullscreen></iframe>`;
+                }
+            } else if (c.imageUrls) {
+                try {
+                    const imgs = JSON.parse(c.imageUrls);
+                    if (imgs.length > 0) {
+                        mediaSection = `<img src="${imgs[0]}" alt="Caso" style="width: 100%; height: 350px; object-fit: cover;">`;
+                    }
+                } catch(e) {}
+            }
+
+            document.getElementById('caseDetailContent')!.innerHTML = `
+                ${mediaSection}
+                <div class="p-4 p-md-5">
+                    <span class="badge bg-danger rounded-pill px-3 py-2 fs-6 shadow-sm mb-3">
+                        <i class="ri-time-line me-1"></i> Faltan ${daysLeft} días
+                    </span>
+                    <h2 class="fw-bold text-dark mb-2">${c.name}</h2>
+                    <p class="text-muted mb-4"><i class="ri-map-pin-line me-1"></i>${c.city}</p>
+                    
+                    <div class="mb-4">
+                        <span class="badge bg-primary bg-opacity-10 text-primary px-3 py-2 rounded-pill fs-6">
+                            <i class="ri-hand-heart-fill me-1"></i> ${c.supportType || 'Ayuda general'}
+                        </span>
+                    </div>
+                    
+                    <p class="text-secondary mb-4 fs-5" style="line-height: 1.6;">${c.description}</p>
+                    
+                    <div class="bg-light p-4 rounded-4 mb-4 border">
+                        <h5 class="text-dark fw-bold mb-2"><i class="ri-bank-card-line me-2 text-primary"></i>Datos para aportar</h5>
+                        <p class="mb-0 text-muted fs-5">${c.donationAccount || 'Contactar por WhatsApp para acordar el apoyo'}</p>
+                    </div>
+                    
+                    <a href="https://wa.me/${c.phone}?text=${encodeURIComponent('¡Hola ' + c.name + '! Vi tu caso en AbrigApp y quiero apoyarte.')}" target="_blank" class="btn btn-success rounded-pill py-3 fw-bold w-100 shadow fs-5">
+                        <i class="ri-whatsapp-line fs-4 me-2 align-middle"></i>Apoyar directamente
+                    </a>
+                </div>
+            `;
+            
+            // Clean up URL after closing modal to prevent reloading it if user refreshes
+            document.getElementById('caseDetailModal')?.addEventListener('hidden.bs.modal', () => {
+                window.history.replaceState({}, document.title, window.location.pathname);
+            }, { once: true });
+            
+        } catch (e) {
+            document.getElementById('caseDetailContent')!.innerHTML = `
+                <div class="text-center py-5">
+                    <i class="ri-error-warning-line fs-1 text-danger mb-3 d-block"></i>
+                    <h4 class="text-dark">Caso no encontrado</h4>
+                    <p class="text-muted">Es posible que el caso ya no esté activo o haya sido resuelto.</p>
+                    <button class="btn btn-outline-primary rounded-pill px-4 mt-3" data-bs-dismiss="modal">Ver otros casos</button>
+                </div>
+            `;
+        }
+    }
 });

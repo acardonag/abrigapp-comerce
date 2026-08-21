@@ -15,7 +15,7 @@ uploadRouter.use((req, res, next) => {
     }
     const token = authHeader.split(' ')[1];
     try {
-        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
+        const decoded = jwt.verify(token, (process.env.JWT_SECRET as string) || 'secret') as any;
         if (decoded.userId || decoded.role === 'superadmin') {
             next();
         } else {

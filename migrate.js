@@ -11,7 +11,7 @@ const sshConfig = {
 const conn = new Client();
 conn.on('ready', () => {
     console.log('SSH connection established');
-    const cmd = 'cd /root/abrigapp-backend && docker compose -f docker-compose.prod.yml exec -T api npm run db:migrate';
+    const cmd = 'cd /root/abrigapp-backend && docker compose -f docker-compose.prod.yml exec -T api npx tsx src/db/add-category.ts';
     console.log(`Running: ${cmd}`);
     
     conn.exec(cmd, (err, stream) => {

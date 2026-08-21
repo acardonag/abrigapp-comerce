@@ -96,13 +96,35 @@
                     <form onsubmit="saveBusinessEdit(event)" id="editBusinessForm">
                         <input type="hidden" id="editBId">
                         <div class="row">
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label">Nombre</label>
                                 <input type="text" id="editBName" class="form-control" required>
                             </div>
-                            <div class="col-md-6 mb-3">
+                            <div class="col-md-4 mb-3">
                                 <label class="form-label">Ciudad</label>
-                                <input type="text" id="editBCity" class="form-control" required>
+                                <select id="editBCity" class="form-select" required>
+                                    <option value="">Selecciona...</option>
+                                    <option value="Armenia">Armenia</option>
+                                    <option value="Buenaventura">Buenaventura</option>
+                                    <option value="Cali">Cali</option>
+                                    <option value="Cartago">Cartago</option>
+                                    <option value="Chinchiná">Chinchiná</option>
+                                    <option value="Dosquebradas">Dosquebradas</option>
+                                    <option value="Filandia">Filandia</option>
+                                    <option value="La Virginia">La Virginia</option>
+                                    <option value="Manizales">Manizales</option>
+                                    <option value="Pereira">Pereira</option>
+                                    <option value="Quibdó">Quibdó</option>
+                                    <option value="Salento">Salento</option>
+                                    <option value="Santa Rosa de Cabal">Santa Rosa de Cabal</option>
+                                    <option value="Tuluá">Tuluá</option>
+                                </select>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Categoría</label>
+                                <select id="editBCategory" class="form-select" required>
+                                    <option value="">Cargando...</option>
+                                </select>
                             </div>
                         </div>
                         <div class="mb-3">

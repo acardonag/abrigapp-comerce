@@ -28,11 +28,26 @@ const checkAuth = () => {
         loginSection.classList.add('d-none');
         dashboardSection.classList.remove('d-none');
         logoutBtn.classList.remove('d-none');
+        fetchCategories();
         loadData();
     } else {
         loginSection.classList.remove('d-none');
         dashboardSection.classList.add('d-none');
         logoutBtn.classList.add('d-none');
+    }
+};
+
+const fetchCategories = async () => {
+    try {
+        const res = await fetch('/api/public/categories');
+        const cats = await res.json();
+        const categorySelect = document.getElementById('editBCategory') as HTMLSelectElement;
+        if (categorySelect) {
+            categorySelect.innerHTML = '<option value="">Selecciona una categoría...</option>' + 
+                cats.map((c: any) => `<option value="${c.id}">${c.name}</option>`).join('');
+        }
+    } catch (err) {
+        console.error('Error fetching categories');
     }
 };
 
@@ -174,7 +189,8 @@ window.openEditBusiness = (id: string) => {
     if (!b) return;
     (document.getElementById('editBId') as HTMLInputElement).value = b.id;
     (document.getElementById('editBName') as HTMLInputElement).value = b.name;
-    (document.getElementById('editBCity') as HTMLInputElement).value = b.city || '';
+    (document.getElementById('editBCity') as HTMLSelectElement).value = b.city || '';
+    (document.getElementById('editBCategory') as HTMLSelectElement).value = b.categoryId || '';
     (document.getElementById('editBDesc') as HTMLTextAreaElement).value = b.description || '';
     (document.getElementById('editBWhatsapp') as HTMLInputElement).value = b.whatsappNumber || '';
     (document.getElementById('editBLogo') as HTMLInputElement).value = b.logoUrl || '';
@@ -192,7 +208,8 @@ window.saveBusinessEdit = async (e: Event) => {
     const id = (document.getElementById('editBId') as HTMLInputElement).value;
     const payload = {
         name: (document.getElementById('editBName') as HTMLInputElement).value,
-        city: (document.getElementById('editBCity') as HTMLInputElement).value,
+        city: (document.getElementById('editBCity') as HTMLSelectElement).value,
+        categoryId: (document.getElementById('editBCategory') as HTMLSelectElement).value,
         description: (document.getElementById('editBDesc') as HTMLTextAreaElement).value,
         whatsappNumber: (document.getElementById('editBWhatsapp') as HTMLInputElement).value,
         logoUrl: (document.getElementById('editBLogo') as HTMLInputElement).value,

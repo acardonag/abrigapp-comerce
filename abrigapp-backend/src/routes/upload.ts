@@ -1,12 +1,30 @@
 import { Router, Response } from 'express';
 import multer from 'multer';
 import path from 'path';
-import { authenticate, AuthRequest } from '../middlewares/auth';
+import { AuthRequest } from '../middlewares/auth';
+import jwt from 'jsonwebtoken';
 import crypto from 'crypto';
 
 export const uploadRouter = Router();
 
-uploadRouter.use(authenticate);
+uploadRouter.use((req, res, next) => {
+    const authHeader = req.headers.authorization;
+    if (!authHeader) {
+        res.status(401).json({ error: 'No token' });
+        return;
+    }
+    const token = authHeader.split(' ')[1];
+    try {
+        const decoded = jwt.verify(token, process.env.JWT_SECRET || 'secret') as any;
+        if (decoded.userId || decoded.role === 'superadmin') {
+            next();
+        } else {
+            res.status(403).json({ error: 'Forbidden' });
+        }
+    } catch(e) {
+        res.status(401).json({ error: 'Invalid token' });
+    }
+});
 
 const storage = multer.diskStorage({
   destination: function (req, file, cb) {

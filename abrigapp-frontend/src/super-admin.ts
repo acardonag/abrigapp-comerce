@@ -213,7 +213,11 @@ window.saveBusinessEdit = async (e: Event) => {
         const fd = new FormData();
         fd.append('file', fileInput.files[0]);
         try {
-            const uRes = await fetch('/api/upload', { method: 'POST', body: fd });
+            const uRes = await fetch('/api/upload', { 
+                method: 'POST', 
+                headers: { 'Authorization': `Bearer ${adminToken}` },
+                body: fd 
+            });
             if (uRes.ok) {
                 const uData = await uRes.json();
                 finalLogoUrl = uData.url;

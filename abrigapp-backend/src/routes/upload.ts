@@ -14,6 +14,10 @@ uploadRouter.use((req, res, next) => {
         return;
     }
     const token = authHeader.split(' ')[1];
+    if (!token) {
+        res.status(401).json({ error: 'No token provided' });
+        return;
+    }
     try {
         const secret: string = process.env.JWT_SECRET ? process.env.JWT_SECRET : 'secret';
         const decoded = jwt.verify(token, secret) as any;

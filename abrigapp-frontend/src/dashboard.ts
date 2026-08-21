@@ -123,9 +123,33 @@ const renderSetupProfile = () => {
                                 <label class="form-label fw-semibold">Número de WhatsApp *</label>
                                 <input type="text" id="bWhatsapp" class="form-control" placeholder="573001234567" required>
                             </div>
-                            <div class="col-md-6 mb-4">
+                            <div class="col-md-6 mb-3">
                                 <label class="form-label fw-semibold">Logo del Negocio (Opcional)</label>
                                 <input type="file" id="bLogoFile" class="form-control" accept="image/*">
+                            </div>
+                        </div>
+                        
+                        <hr class="my-4">
+                        <h5 class="fw-bold mb-3 text-secondary"><i class="ri-links-line me-2"></i>Redes Sociales (Opcional)</h5>
+                        
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-medium"><i class="ri-instagram-line me-1"></i>Instagram</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">@</span>
+                                    <input type="text" id="bInstagram" class="form-control border-start-0" placeholder="mi_negocio">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label fw-medium"><i class="ri-tiktok-fill me-1"></i>TikTok</label>
+                                <div class="input-group">
+                                    <span class="input-group-text bg-light border-end-0">@</span>
+                                    <input type="text" id="bTiktok" class="form-control border-start-0" placeholder="mi_negocio">
+                                </div>
+                            </div>
+                            <div class="col-md-4 mb-4">
+                                <label class="form-label fw-medium"><i class="ri-global-line me-1"></i>Sitio Web</label>
+                                <input type="url" id="bWebsite" class="form-control" placeholder="https://www.minegocio.com">
                             </div>
                         </div>
 
@@ -164,6 +188,10 @@ window.saveBusiness = async (e: Event) => {
             }
         }
 
+        const igVal = (document.getElementById('bInstagram') as HTMLInputElement).value.trim().replace('@', '');
+        const tkVal = (document.getElementById('bTiktok') as HTMLInputElement).value.trim().replace('@', '');
+        const webVal = (document.getElementById('bWebsite') as HTMLInputElement).value.trim();
+
         const payload = {
             name: (document.getElementById('bName') as HTMLInputElement).value,
             slug: (document.getElementById('bSlug') as HTMLInputElement).value,
@@ -172,6 +200,9 @@ window.saveBusiness = async (e: Event) => {
             city: (document.getElementById('bCity') as HTMLSelectElement).value,
             whatsappNumber: (document.getElementById('bWhatsapp') as HTMLInputElement).value,
             logoUrl: logoUrl,
+            instagramUrl: igVal ? (igVal.startsWith('http') ? igVal : `https://www.instagram.com/${igVal}`) : '',
+            tiktokUrl: tkVal ? (tkVal.startsWith('http') ? tkVal : `https://www.tiktok.com/@${tkVal}`) : '',
+            websiteUrl: webVal,
         };
 
         const res = await fetchWithAuth('/api/business', {
@@ -253,7 +284,10 @@ window.editBusiness = () => {
         (document.getElementById('bDesc') as HTMLTextAreaElement).value = currentBusiness.description || '';
         (document.getElementById('bCity') as HTMLInputElement).value = currentBusiness.city;
         (document.getElementById('bWhatsapp') as HTMLInputElement).value = currentBusiness.whatsappNumber;
-        (document.getElementById('bLogo') as HTMLInputElement).value = currentBusiness.logoUrl || '';
+        (document.getElementById('bLogoFile') as HTMLInputElement).value = ''; // Reset file input
+        (document.getElementById('bInstagram') as HTMLInputElement).value = currentBusiness.instagramUrl ? currentBusiness.instagramUrl.replace('https://www.instagram.com/', '') : '';
+        (document.getElementById('bTiktok') as HTMLInputElement).value = currentBusiness.tiktokUrl ? currentBusiness.tiktokUrl.replace('https://www.tiktok.com/@', '') : '';
+        (document.getElementById('bWebsite') as HTMLInputElement).value = currentBusiness.websiteUrl || '';
     }, 100);
 };
 

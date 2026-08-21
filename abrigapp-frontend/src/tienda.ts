@@ -41,16 +41,32 @@ const renderHeader = () => {
     const header = document.getElementById('storeHeader')!;
     const logo = storeData.logoUrl || `https://ui-avatars.com/api/?name=${storeData.name.replace(' ', '+')}&size=120`;
     
+    let socialLinksHtml = '';
+    if (storeData.instagramUrl || storeData.tiktokUrl || storeData.websiteUrl) {
+        socialLinksHtml = `<div class="d-flex gap-3 mt-3 justify-content-center justify-content-md-start">`;
+        if (storeData.instagramUrl) {
+            socialLinksHtml += `<a href="${storeData.instagramUrl}" target="_blank" class="text-primary fs-3 text-decoration-none" title="Instagram"><i class="ri-instagram-line"></i></a>`;
+        }
+        if (storeData.tiktokUrl) {
+            socialLinksHtml += `<a href="${storeData.tiktokUrl}" target="_blank" class="text-dark fs-3 text-decoration-none" title="TikTok"><i class="ri-tiktok-fill"></i></a>`;
+        }
+        if (storeData.websiteUrl) {
+            socialLinksHtml += `<a href="${storeData.websiteUrl}" target="_blank" class="text-secondary fs-3 text-decoration-none" title="Sitio Web"><i class="ri-global-line"></i></a>`;
+        }
+        socialLinksHtml += `</div>`;
+    }
+
     header.innerHTML = `
         <div class="container">
             <div class="row align-items-center text-center text-md-start">
                 <div class="col-md-2 mb-3 mb-md-0">
-                    <img src="${logo}" alt="${storeData.name}" class="rounded-circle" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--primary-color);">
+                    <img src="${logo}" alt="${storeData.name}" class="rounded-circle shadow-sm" style="width: 120px; height: 120px; object-fit: cover; border: 4px solid var(--primary-color);">
                 </div>
-                <div class="col-md-9">
+                <div class="col-md-8">
                     <h1 class="fw-bold mb-2">${storeData.name}</h1>
                     <p class="text-muted mb-2"><i class="ri-map-pin-line"></i> ${storeData.city}</p>
                     <p class="mb-0 fs-5">${storeData.description || '¡Apoyando la economía local!'}</p>
+                    ${socialLinksHtml}
                 </div>
                 <div class="col-md-2 text-md-end mt-3 mt-md-0 d-flex flex-row flex-md-column justify-content-center gap-2 align-items-md-end">
                     <button class="btn btn-outline-primary d-flex align-items-center justify-content-center gap-2" onclick="shareBusiness('${storeData.name}', '${storeData.slug}')" title="Compartir tienda">

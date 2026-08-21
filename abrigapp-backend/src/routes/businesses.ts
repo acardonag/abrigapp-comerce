@@ -28,7 +28,7 @@ businessRouter.get('/my-business', async (req: AuthRequest, res: Response) => {
 businessRouter.post('/', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.userId;
-    const { name, description, city, categoryId, whatsappNumber, logoUrl } = req.body;
+    const { name, description, city, categoryId, whatsappNumber, logoUrl, instagramUrl, tiktokUrl, websiteUrl } = req.body;
     
     const slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
 
@@ -47,6 +47,9 @@ businessRouter.post('/', async (req: AuthRequest, res: Response) => {
       categoryId,
       whatsappNumber,
       logoUrl,
+      instagramUrl,
+      tiktokUrl,
+      websiteUrl,
     }).returning();
 
     res.json(newBusiness);
@@ -58,7 +61,7 @@ businessRouter.post('/', async (req: AuthRequest, res: Response) => {
 businessRouter.put('/', async (req: AuthRequest, res: Response) => {
   try {
     const userId = req.user!.userId;
-    const { name, description, city, categoryId, whatsappNumber, logoUrl, isActive } = req.body;
+    const { name, description, city, categoryId, whatsappNumber, logoUrl, instagramUrl, tiktokUrl, websiteUrl, isActive } = req.body;
     
     let slug;
     if (name) {
@@ -73,6 +76,9 @@ businessRouter.put('/', async (req: AuthRequest, res: Response) => {
       categoryId,
       whatsappNumber,
       logoUrl,
+      instagramUrl,
+      tiktokUrl,
+      websiteUrl,
       isActive,
       updatedAt: new Date()
     }).where(eq(businesses.userId, userId)).returning();

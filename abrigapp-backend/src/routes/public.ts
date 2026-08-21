@@ -46,6 +46,9 @@ publicRouter.get('/businesses', async (req, res) => {
       city: businesses.city,
       logoUrl: businesses.logoUrl,
       whatsappNumber: businesses.whatsappNumber,
+      instagramUrl: businesses.instagramUrl,
+      tiktokUrl: businesses.tiktokUrl,
+      websiteUrl: businesses.websiteUrl,
       category: categories.name,
     })
     .from(businesses)

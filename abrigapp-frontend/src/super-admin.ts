@@ -14,6 +14,10 @@ declare global {
         logoutAdmin: () => void;
         switchTab: (tab: string) => void;
         deleteRecord: (id: string) => void;
+        openEditBusiness: (id: string) => void;
+        openEditProduct: (id: string) => void;
+        saveBusinessEdit: (e: Event) => void;
+        saveProductEdit: (e: Event) => void;
         showCreateVolunteerModal: () => void;
         createVolunteer: (e: Event) => void;
     }
@@ -106,7 +110,8 @@ const renderTable = () => {
                 <td>${b.slug}</td>
                 <td>${b.city}</td>
                 <td>${b.whatsappNumber}</td>
-                <td class="text-end">
+                <td class="text-end text-nowrap">
+                    <button class="btn btn-sm btn-outline-warning me-1" onclick="openEditBusiness('${b.id}')"><i class="ri-edit-line"></i> Editar</button>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord('${b.id}')"><i class="ri-delete-bin-line"></i> Eliminar</button>
                 </td>
             </tr>
@@ -118,7 +123,8 @@ const renderTable = () => {
                 <td class="fw-bold">${p.title}</td>
                 <td>$ ${p.price}</td>
                 <td><span class="badge ${p.isAvailable ? 'bg-success' : 'bg-secondary'}">${p.isAvailable ? 'Sí' : 'No'}</span></td>
-                <td class="text-end">
+                <td class="text-end text-nowrap">
+                    <button class="btn btn-sm btn-outline-warning me-1" onclick="openEditProduct('${p.id}')"><i class="ri-edit-line"></i> Editar</button>
                     <button class="btn btn-sm btn-outline-danger" onclick="deleteRecord('${p.id}')"><i class="ri-delete-bin-line"></i> Eliminar</button>
                 </td>
             </tr>
@@ -161,6 +167,92 @@ window.deleteRecord = async (id: string) => {
     } catch (err) {
         alert('Error conectando al servidor');
     }
+};
+
+window.openEditBusiness = (id: string) => {
+    const b = dataList.find(x => x.id === id);
+    if (!b) return;
+    (document.getElementById('editBId') as HTMLInputElement).value = b.id;
+    (document.getElementById('editBName') as HTMLInputElement).value = b.name;
+    (document.getElementById('editBCity') as HTMLInputElement).value = b.city || '';
+    (document.getElementById('editBDesc') as HTMLTextAreaElement).value = b.description || '';
+    (document.getElementById('editBWhatsapp') as HTMLInputElement).value = b.whatsappNumber || '';
+    (document.getElementById('editBLogo') as HTMLInputElement).value = b.logoUrl || '';
+    (document.getElementById('editBInstagram') as HTMLInputElement).value = b.instagramUrl || '';
+    (document.getElementById('editBTiktok') as HTMLInputElement).value = b.tiktokUrl || '';
+    (document.getElementById('editBWebsite') as HTMLInputElement).value = b.websiteUrl || '';
+    (document.getElementById('editBIsActive') as HTMLInputElement).checked = b.isActive;
+
+    // @ts-ignore
+    new bootstrap.Modal(document.getElementById('editBusinessModal')).show();
+};
+
+window.saveBusinessEdit = async (e: Event) => {
+    e.preventDefault();
+    const id = (document.getElementById('editBId') as HTMLInputElement).value;
+    const payload = {
+        name: (document.getElementById('editBName') as HTMLInputElement).value,
+        city: (document.getElementById('editBCity') as HTMLInputElement).value,
+        description: (document.getElementById('editBDesc') as HTMLTextAreaElement).value,
+        whatsappNumber: (document.getElementById('editBWhatsapp') as HTMLInputElement).value,
+        logoUrl: (document.getElementById('editBLogo') as HTMLInputElement).value,
+        instagramUrl: (document.getElementById('editBInstagram') as HTMLInputElement).value,
+        tiktokUrl: (document.getElementById('editBTiktok') as HTMLInputElement).value,
+        websiteUrl: (document.getElementById('editBWebsite') as HTMLInputElement).value,
+        isActive: (document.getElementById('editBIsActive') as HTMLInputElement).checked,
+    };
+
+    try {
+        const res = await fetch(`/api/superadmin/business/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            // @ts-ignore
+            bootstrap.Modal.getInstance(document.getElementById('editBusinessModal')).hide();
+            loadData();
+        } else alert('Error al guardar');
+    } catch (err) { alert('Error de conexión'); }
+};
+
+window.openEditProduct = (id: string) => {
+    const p = dataList.find(x => x.id === id);
+    if (!p) return;
+    (document.getElementById('editPId') as HTMLInputElement).value = p.id;
+    (document.getElementById('editPTitle') as HTMLInputElement).value = p.title;
+    (document.getElementById('editPPrice') as HTMLInputElement).value = p.price;
+    (document.getElementById('editPDesc') as HTMLTextAreaElement).value = p.description || '';
+    (document.getElementById('editPImage') as HTMLInputElement).value = p.imageUrl || '';
+    (document.getElementById('editPIsAvailable') as HTMLInputElement).checked = p.isAvailable;
+
+    // @ts-ignore
+    new bootstrap.Modal(document.getElementById('editProductModal')).show();
+};
+
+window.saveProductEdit = async (e: Event) => {
+    e.preventDefault();
+    const id = (document.getElementById('editPId') as HTMLInputElement).value;
+    const payload = {
+        title: (document.getElementById('editPTitle') as HTMLInputElement).value,
+        price: (document.getElementById('editPPrice') as HTMLInputElement).value,
+        description: (document.getElementById('editPDesc') as HTMLTextAreaElement).value,
+        imageUrl: (document.getElementById('editPImage') as HTMLInputElement).value,
+        isAvailable: (document.getElementById('editPIsAvailable') as HTMLInputElement).checked,
+    };
+
+    try {
+        const res = await fetch(`/api/superadmin/product/${id}`, {
+            method: 'PUT',
+            headers: { 'Content-Type': 'application/json', 'Authorization': `Bearer ${adminToken}` },
+            body: JSON.stringify(payload)
+        });
+        if (res.ok) {
+            // @ts-ignore
+            bootstrap.Modal.getInstance(document.getElementById('editProductModal')).hide();
+            loadData();
+        } else alert('Error al guardar');
+    } catch (err) { alert('Error de conexión'); }
 };
 
 window.showCreateVolunteerModal = () => {

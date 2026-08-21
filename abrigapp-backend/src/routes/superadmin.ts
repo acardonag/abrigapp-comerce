@@ -30,6 +30,42 @@ superadminRouter.get('/businesses', async (req: Request, res: Response) => {
   }
 });
 
+// Update a business
+superadminRouter.put('/business/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { name, description, city, categoryId, whatsappNumber, logoUrl, instagramUrl, tiktokUrl, websiteUrl, isActive } = req.body;
+    
+    let slug;
+    if (name) {
+      slug = name.toLowerCase().replace(/[^a-z0-9]+/g, '-').replace(/(^-|-$)+/g, '');
+    }
+
+    const [updated] = await db.update(businesses).set({
+      name,
+      slug,
+      description,
+      city,
+      categoryId,
+      whatsappNumber,
+      logoUrl,
+      instagramUrl,
+      tiktokUrl,
+      websiteUrl,
+      isActive,
+      updatedAt: new Date()
+    }).where(eq(businesses.id, id as string)).returning();
+
+    if (!updated) {
+      res.status(404).json({ error: 'Business not found' });
+      return;
+    }
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating business' });
+  }
+});
+
 // Delete a business (and its products by cascade or manually)
 superadminRouter.delete('/business/:id', async (req: Request, res: Response) => {
   try {
@@ -55,6 +91,31 @@ superadminRouter.get('/products', async (req: Request, res: Response) => {
     res.json(allProducts);
   } catch (error) {
     res.status(500).json({ error: 'Error fetching products' });
+  }
+});
+
+// Update a product
+superadminRouter.put('/product/:id', async (req: Request, res: Response) => {
+  try {
+    const { id } = req.params;
+    const { title, description, price, imageUrl, isAvailable } = req.body;
+
+    const [updated] = await db.update(products).set({
+      title,
+      description,
+      price,
+      imageUrl,
+      isAvailable,
+      updatedAt: new Date()
+    }).where(eq(products.id, id as string)).returning();
+
+    if (!updated) {
+      res.status(404).json({ error: 'Product not found' });
+      return;
+    }
+    res.json(updated);
+  } catch (error) {
+    res.status(500).json({ error: 'Error updating product' });
   }
 });
 

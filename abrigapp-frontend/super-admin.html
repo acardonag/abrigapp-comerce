@@ -84,6 +84,104 @@
         </div>
     </div>
 
+    <!-- Edit Business Modal -->
+    <div class="modal fade" id="editBusinessModal" tabindex="-1">
+        <div class="modal-dialog modal-lg">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Comercio</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="saveBusinessEdit(event)" id="editBusinessForm">
+                        <input type="hidden" id="editBId">
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Nombre</label>
+                                <input type="text" id="editBName" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Ciudad</label>
+                                <input type="text" id="editBCity" class="form-control" required>
+                            </div>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea id="editBDesc" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">WhatsApp</label>
+                                <input type="text" id="editBWhatsapp" class="form-control" required>
+                            </div>
+                            <div class="col-md-6 mb-3">
+                                <label class="form-label">Logo URL</label>
+                                <input type="text" id="editBLogo" class="form-control">
+                            </div>
+                        </div>
+                        <div class="row">
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Instagram URL</label>
+                                <input type="text" id="editBInstagram" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">TikTok URL</label>
+                                <input type="text" id="editBTiktok" class="form-control">
+                            </div>
+                            <div class="col-md-4 mb-3">
+                                <label class="form-label">Sitio Web URL</label>
+                                <input type="text" id="editBWebsite" class="form-control">
+                            </div>
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editBIsActive">
+                            <label class="form-check-label" for="editBIsActive">Cuenta Activa</label>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
+    <!-- Edit Product Modal -->
+    <div class="modal fade" id="editProductModal" tabindex="-1">
+        <div class="modal-dialog">
+            <div class="modal-content">
+                <div class="modal-header">
+                    <h5 class="modal-title">Editar Producto</h5>
+                    <button type="button" class="btn-close" data-bs-dismiss="modal"></button>
+                </div>
+                <div class="modal-body">
+                    <form onsubmit="saveProductEdit(event)" id="editProductForm">
+                        <input type="hidden" id="editPId">
+                        <div class="mb-3">
+                            <label class="form-label">Título</label>
+                            <input type="text" id="editPTitle" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Precio</label>
+                            <input type="number" id="editPPrice" class="form-control" required>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Descripción</label>
+                            <textarea id="editPDesc" class="form-control" rows="3"></textarea>
+                        </div>
+                        <div class="mb-3">
+                            <label class="form-label">Imagen URL</label>
+                            <input type="text" id="editPImage" class="form-control">
+                        </div>
+                        <div class="mb-3 form-check">
+                            <input type="checkbox" class="form-check-input" id="editPIsAvailable">
+                            <label class="form-check-label" for="editPIsAvailable">Disponible</label>
+                        </div>
+                        <button type="submit" class="btn btn-warning w-100">Guardar Cambios</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+    </div>
+
     <!-- Volunteer Modal -->
     <div class="modal fade" id="volunteerModal" tabindex="-1">
         <div class="modal-dialog">

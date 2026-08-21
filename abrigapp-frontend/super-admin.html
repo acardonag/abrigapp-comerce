@@ -138,7 +138,11 @@
                             </div>
                             <div class="col-md-6 mb-3">
                                 <label class="form-label">Logo URL</label>
-                                <input type="text" id="editBLogo" class="form-control">
+                                <div class="input-group">
+                                    <input type="text" id="editBLogo" class="form-control">
+                                    <input type="file" id="editBLogoFile" class="d-none" accept="image/*">
+                                    <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('editBLogoFile').click()"><i class="ri-upload-2-line"></i> Subir</button>
+                                </div>
                             </div>
                         </div>
                         <div class="row">
@@ -191,7 +195,11 @@
                         </div>
                         <div class="mb-3">
                             <label class="form-label">Imagen URL</label>
-                            <input type="text" id="editPImage" class="form-control">
+                            <div class="input-group">
+                                <input type="text" id="editPImage" class="form-control">
+                                <input type="file" id="editPImageFile" class="d-none" accept="image/*">
+                                <button class="btn btn-outline-secondary" type="button" onclick="document.getElementById('editPImageFile').click()"><i class="ri-upload-2-line"></i> Subir</button>
+                            </div>
                         </div>
                         <div class="mb-3 form-check">
                             <input type="checkbox" class="form-check-input" id="editPIsAvailable">

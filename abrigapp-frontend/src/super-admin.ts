@@ -198,6 +198,7 @@ window.openEditBusiness = (id: string) => {
     (document.getElementById('editBTiktok') as HTMLInputElement).value = b.tiktokUrl || '';
     (document.getElementById('editBWebsite') as HTMLInputElement).value = b.websiteUrl || '';
     (document.getElementById('editBIsActive') as HTMLInputElement).checked = b.isActive;
+    (document.getElementById('editBLogoFile') as HTMLInputElement).value = '';
 
     // @ts-ignore
     new bootstrap.Modal(document.getElementById('editBusinessModal')).show();
@@ -206,13 +207,33 @@ window.openEditBusiness = (id: string) => {
 window.saveBusinessEdit = async (e: Event) => {
     e.preventDefault();
     const id = (document.getElementById('editBId') as HTMLInputElement).value;
+    let finalLogoUrl = (document.getElementById('editBLogo') as HTMLInputElement).value;
+    const fileInput = document.getElementById('editBLogoFile') as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+        const fd = new FormData();
+        fd.append('file', fileInput.files[0]);
+        try {
+            const uRes = await fetch('/api/upload', { method: 'POST', body: fd });
+            if (uRes.ok) {
+                const uData = await uRes.json();
+                finalLogoUrl = uData.url;
+            } else {
+                alert('Error subiendo logo');
+                return;
+            }
+        } catch (e) {
+            alert('Error subiendo logo');
+            return;
+        }
+    }
+
     const payload = {
         name: (document.getElementById('editBName') as HTMLInputElement).value,
         city: (document.getElementById('editBCity') as HTMLSelectElement).value,
         categoryId: (document.getElementById('editBCategory') as HTMLSelectElement).value,
         description: (document.getElementById('editBDesc') as HTMLTextAreaElement).value,
         whatsappNumber: (document.getElementById('editBWhatsapp') as HTMLInputElement).value,
-        logoUrl: (document.getElementById('editBLogo') as HTMLInputElement).value,
+        logoUrl: finalLogoUrl,
         instagramUrl: (document.getElementById('editBInstagram') as HTMLInputElement).value,
         tiktokUrl: (document.getElementById('editBTiktok') as HTMLInputElement).value,
         websiteUrl: (document.getElementById('editBWebsite') as HTMLInputElement).value,
@@ -242,6 +263,7 @@ window.openEditProduct = (id: string) => {
     (document.getElementById('editPDesc') as HTMLTextAreaElement).value = p.description || '';
     (document.getElementById('editPImage') as HTMLInputElement).value = p.imageUrl || '';
     (document.getElementById('editPIsAvailable') as HTMLInputElement).checked = p.isAvailable;
+    (document.getElementById('editPImageFile') as HTMLInputElement).value = '';
 
     // @ts-ignore
     new bootstrap.Modal(document.getElementById('editProductModal')).show();
@@ -250,11 +272,31 @@ window.openEditProduct = (id: string) => {
 window.saveProductEdit = async (e: Event) => {
     e.preventDefault();
     const id = (document.getElementById('editPId') as HTMLInputElement).value;
+    let finalImageUrl = (document.getElementById('editPImage') as HTMLInputElement).value;
+    const fileInput = document.getElementById('editPImageFile') as HTMLInputElement;
+    if (fileInput.files && fileInput.files[0]) {
+        const fd = new FormData();
+        fd.append('file', fileInput.files[0]);
+        try {
+            const uRes = await fetch('/api/upload', { method: 'POST', body: fd });
+            if (uRes.ok) {
+                const uData = await uRes.json();
+                finalImageUrl = uData.url;
+            } else {
+                alert('Error subiendo imagen');
+                return;
+            }
+        } catch (e) {
+            alert('Error subiendo imagen');
+            return;
+        }
+    }
+
     const payload = {
         title: (document.getElementById('editPTitle') as HTMLInputElement).value,
         price: (document.getElementById('editPPrice') as HTMLInputElement).value,
         description: (document.getElementById('editPDesc') as HTMLTextAreaElement).value,
-        imageUrl: (document.getElementById('editPImage') as HTMLInputElement).value,
+        imageUrl: finalImageUrl,
         isAvailable: (document.getElementById('editPIsAvailable') as HTMLInputElement).checked,
     };
 
